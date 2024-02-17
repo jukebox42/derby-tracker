@@ -1,0 +1,68 @@
+Services
+- Player management - manage players on the league
+- Team management - Manage the teams on the league (like Cherry Bombs and Allstars)
+- Charter management - The players on the team that are eligeable to play sanctioned games (Team Roster)
+- Game management - The players playing in various games (GameRoster)
+- 
+- Practice attendance
+- Event attendance
+- Game stats
+- Events?
+- Game schedules?
+- News?
+
+League
+- name
+- location
+- wftdaRank? (number)
+- yearFounded?
+
+Member
+- id
+- name
+- alias (derby name)
+- number?
+- level? (level 2 is contact certified)
+- isOnLoa?
+- preferredPosition
+- tags?
+
+Team
+- id
+- name
+- teamLevelId
+
+TeamLevel
+- id
+- name (A, B, Home, ect)
+
+Charter (team roster)
+- id
+- teamId
+- playerId
+- isCaptain
+- positions (enum)
+
+Position (enum)
+- type (Jammer, Blocker, Pivot, SkatingOfficial, NonSkatingOfficial, Coach)
+
+GameRoster
+- id
+- charterId
+- line (int)
+
+Role (permissions?)
+- id
+- name
+
+MemberRoles
+- memberId
+- roleId
+
+Tag
+- id
+- name
+
+(Tag ideas)
+- captain
+- 

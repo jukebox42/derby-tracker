@@ -3,21 +3,41 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "npx prisma generate && next dev",
+    "build": "npx prisma generate && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "dbpush": "npx prisma db push",
+    "dbseed": "npx prisma db seed",
+    "dbstudio": "npx prisma studio"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
+    "@hookform/resolvers": "^3.3.4",
+    "@mui/icons-material": "^5.15.10",
+    "@mui/lab": "^5.0.0-alpha.165",
     "@mui/material": "^5.15.10",
     "@mui/material-nextjs": "^5.15.9",
+    "@mui/x-data-grid": "^6.19.4",
+    "@mui/x-date-pickers": "^6.19.6",
+    "@prisma/client": "^5.9.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@vercel/postgres": "^0.7.2",
+    "add": "^2.0.6",
+    "bcryptjs": "^2.4.3",
+    "dayjs": "^1.11.10",
     "next": "14.1.0",
     "prisma": "^5.9.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-hook-form": "^7.50.1",
+    "yarn": "^1.22.21",
+    "yup": "^1.3.3",
     "zustand": "^4.5.1"
   },
   "devDependencies": {
@@ -26,6 +46,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
+    "tsx": "^4.7.1",
     "typescript": "^5"
   }
 }

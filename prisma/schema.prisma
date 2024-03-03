@@ -1,0 +1,216 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  extensions = [pgcrypto]
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+// Enums
+
+enum Level {
+  NON_PLAYER // Level 0
+  ROOKIE // Level 1
+  CONTACT // Level 2
+  GAME // Level 3
+}
+
+enum Position {
+  BLOCKER
+  PIVOT
+  JAMMER
+  SKATING_OFFICIAL
+  NON_SKATING_OFFICIAL
+  COACH
+}
+
+enum Permission {
+  ATTENDANCE_READ
+  ATTENDANCE_MANAGE
+  ASSESSMENT_READ
+  ASSESSMENT_MANAGE
+  EVENT_READ
+  EVENT_MANAGE
+  GROUP_READ
+  GROUP_MANAGE
+  MEMBER_READ
+  MEMBER_MANAGE
+  SETTING_READ
+  SETTING_MANAGE
+  STATS_READ
+  STATS_MANAGE
+  TEAM_READ
+  TEAM_MANAGE
+
+  // Not tied to pages
+  GROUP_ADMIN // if user is in group they can manage
+  EVENT_GAME_READ
+  EVENT_GAME_MANAGE
+  EVENT_PRACTICE_READ
+  EVENT_PRACTICE_MANAGE
+  EVENT_ACTIVITY_READ
+  EVENT_ACTIVITY_MANAGE
+  EVENT_DRAFT_MANAGE // if the user can manage all drafts or just theirs
+  TEAM_CHARTER_READ
+  TEAM_CHARTER_MANAGE
+  GAME_ROSTER_VIEW
+  GAME_ROSTER_MANAGE
+}
+
+enum EventType {
+  PRACTICE
+  GAME
+  ACTIVITY
+}
+
+// Tables
+
+model Member {
+  @@map(name: "members")
+  id                 String     @default(cuid()) @id @db.VarChar(30)
+  name               String     @db.VarChar(200)
+  email              String     @unique @db.VarChar(500)
+  alias              String     @db.VarChar(200)
+  number             String?    @db.VarChar(4)
+  level              Level      @default(ROOKIE)
+  pronouns           String?    @db.VarChar(100)
+  isOnLoa            Boolean    @default(false) @map(name: "is_on_loa")
+  preferredPosition  Position?  @map(name: "preferred_position")
+  active             Boolean    @default(true)
+  about              String?    @db.VarChar(500)
+  slackUsername      String?    @db.VarChar(100)
+  facebookLink       String?    @db.VarChar(250)
+  createdAt          DateTime   @default(now()) @map(name: "created_at")
+  updatedAt          DateTime   @updatedAt @map(name: "updated_at")
+
+  contact            MemberContact?
+  charters           Charter[]
+  password           Password?
+  session            Session?
+  groups             MemberGroup[]
+}
+
+model MemberContact {
+  @@map(name: "member_contacts")
+  phone     String?    @db.VarChar(30)
+  address   String?    @db.VarChar(250)
+  city      String?    @db.VarChar(100)
+  state     String?    @db.VarChar(2)
+  zip       String?    @db.VarChar(10)
+
+  member    Member?    @relation(fields: [memberId], references: [id])
+  memberId  String     @unique @map(name: "member_id")
+}
+
+model Group {
+  @@map(name: "groups")
+  id           String     @default(cuid()) @id @db.VarChar(30)
+  name         String     @unique @db.VarChar(200)
+  description  String?    @db.VarChar(250)
+  createdAt    DateTime   @default(now()) @map(name: "created_at")
+  updatedAt    DateTime   @updatedAt @map(name: "updated_at")
+
+  memberGroup  MemberGroup[]
+  permissions  Permission[]
+}
+
+model MemberGroup {
+  @@map(name: "member_roles")
+  createdAt  DateTime   @default(now()) @map(name: "created_at")
+
+  member     Member     @relation(fields: [memberId], references: [id])
+  memberId   String     @map(name: "member_id")
+  groups     Group      @relation(fields: [groupId], references: [id])
+  groupId    String     @map(name: "group_id")
+
+  @@id([memberId, groupId])
+}
+
+model Password {
+  @@map(name: "member_passwords")
+  password   String
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+
+  member     Member?    @relation(fields: [memberId], references: [id])
+  memberId   String     @unique @map(name: "member_id")
+}
+
+model Session {
+  @@map(name: "sessions")
+  id           String        @default(cuid()) @id @db.VarChar(30)
+  createdAt    DateTime      @default(now()) @map(name: "created_at")
+  updatedAt    DateTime      @updatedAt @map(name: "updated_at")
+  maxAge       Int
+  permissions  Permission[]
+
+  member       Member?       @relation(fields: [memberId], references: [id])
+  memberId     String        @unique @map(name: "member_id")
+}
+
+model Event {
+  @@map(name: "events")
+  id        String     @default(cuid()) @id @db.VarChar(30)
+  name      String     @db.VarChar(200)
+  notes     String?    @db.VarChar(500)
+  location  String     @db.VarChar(200)
+  date      DateTime
+  type      EventType
+
+  roster    Roster?
+}
+
+model TeamLevel {
+  @@map(name: "team_levels")
+  id     String     @default(cuid()) @id @db.VarChar(30)
+  name   String     @db.VarChar(200)
+
+  teams  Team[]
+}
+
+model Team {
+  @@map(name: "teams")
+  id           String     @default(cuid()) @id @db.VarChar(30)
+  name         String     @db.VarChar(200)
+  description  String?  @db.VarChar(250)
+  createdAt    DateTime   @default(now()) @map(name: "created_at")
+  updatedAt    DateTime   @updatedAt @map(name: "updated_at")
+
+  level        TeamLevel  @relation(fields: [levelId], references: [id])
+  levelId      String     @db.VarChar(30) @map(name: "level_id")
+  charters     Charter[]
+}
+
+model Charter {
+  @@map(name: "charters")
+  id         String       @default(cuid()) @id @db.VarChar(30)
+  isCaptain  Boolean      @default(false) @map(name: "is_captain")
+  position   Position[]
+  createdAt  DateTime     @default(now()) @map(name: "created_at")
+  updatedAt  DateTime     @updatedAt @map(name: "updated_at")
+
+  team       Team         @relation(fields: [teamId], references: [id])
+  teamId     String       @db.VarChar(30) @map(name: "team_id")
+  member     Member       @relation(fields: [memberId], references: [id])
+  memberId   String       @db.VarChar(30) @map(name: "member_id")
+  roster     Roster[]
+}
+
+model Roster {
+  @@map(name: "rosters")
+  id         String    @default(cuid()) @id @db.VarChar(30)
+  line       Int
+  createdAt  DateTime  @default(now()) @map(name: "created_at")
+  updatedAt  DateTime  @updatedAt @map(name: "updated_at")
+
+  event      Event     @relation(fields: [eventId], references: [id])
+  eventId    String    @unique @db.VarChar(30) @map(name: "event_id")
+  charter    Charter   @relation(fields: [charterId], references: [id])
+  charterId  String    @db.VarChar(30) @map(name: "charter_id")
+}

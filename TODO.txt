@@ -66,3 +66,27 @@ Tag
 (Tag ideas)
 - captain
 - 
+
+
+
+NAV
+- Attendance
+- Teams (Details, Charter)
+- Games (Roster, Stats)
+- Practices
+- Events
+- Stats
+- Admin
+-- Settings
+-- Team Levels
+-- Sessions
+-- Members
+-- Roles
+-- Tags
+-- Assesments
+-- Seasons?
+
+- Me
+-- Profile
+-- Stats
+-- Logout

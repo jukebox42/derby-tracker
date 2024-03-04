@@ -28,29 +28,30 @@ export default function Login() {
           onSuccess={() => router.push(routes.MEMBERS.path)}
           submitButtonText="Login"
           variant="unstyled"
-          >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Derby
-            </Typography>
-            <TextField
-              required
-              name="email"
-              label="Email Address"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              required
-              label="Password"
-              type="password"
-              autoComplete="current-password"
-              name="password"
-            />
-          </ConnectedForm>
-        </Pane>
+          hideCancel
+        >
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Derby
+          </Typography>
+          <TextField
+            required
+            name="email"
+            label="Email Address"
+            autoComplete="email"
+            autoFocus
+          />
+          <TextField
+            required
+            label="Password"
+            type="password"
+            autoComplete="current-password"
+            name="password"
+          />
+        </ConnectedForm>
+      </Pane>
     </Container>
   );
 };

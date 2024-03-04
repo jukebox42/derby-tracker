@@ -24,27 +24,27 @@ export type ConnectedFormProps<T, F> = {
   variant?: "standard" | "panel" | "unstyled",
   children?: React.ReactNode | React.ReactNode[],
   onOpen?: () => void,
-  panelButton?: (open: () => void) => React.ReactNode
+  panelButton?: (open: () => void) => React.ReactNode,
+  closeOnSuccess?: boolean,
 } & UseConnectedForm<T,F>;
 
 const FormContext = React.createContext<RenderFuncProps<any> | undefined>(undefined);
 
-export const ConnectedForm = <T extends FieldValues, F>(
-  {
-    title,
-    onSubmit,
-    onSuccess,
-    onCancel,
-    onOpen,
-    panelButton,
-    hideCancel,
-    schema,
-    children,
-    submitButtonText = "Submit",
-    isLoading = false,
-    variant = "standard"
-  }: ConnectedFormProps<T, F>
-) => {
+export const ConnectedForm = <T extends FieldValues, F>({
+  title,
+  onSubmit,
+  onSuccess,
+  onCancel,
+  onOpen,
+  panelButton,
+  hideCancel,
+  schema,
+  children,
+  closeOnSuccess = true,
+  submitButtonText = "Submit",
+  isLoading = false,
+  variant = "standard"
+}: ConnectedFormProps<T, F>) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
     cancel,
@@ -54,7 +54,14 @@ export const ConnectedForm = <T extends FieldValues, F>(
     errors,
     isSubmitting,
     apiError
-  } = useConnectedForm<T, F>({ schema, onSubmit, onSuccess });
+  } = useConnectedForm<T, F>({
+    schema,
+    onSubmit,
+    onSuccess: data => {
+      closeOnSuccess && setIsOpen(false);
+      return onSuccess(data);
+    }
+  });
 
   useEffect(() => {
     if(!isOpen) {
@@ -64,6 +71,7 @@ export const ConnectedForm = <T extends FieldValues, F>(
   }, [isOpen])
 
   const handleCancel = () => {
+    setIsOpen(false);
     cancel();
     onCancel?.();
   }
@@ -106,7 +114,7 @@ export const ConnectedForm = <T extends FieldValues, F>(
     return (
       <>
         {panelButton?.(() => setIsOpen(true))}
-        <Panel isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <Panel isOpen={isOpen} onClose={() => { setIsOpen(false); cancel() }}>
           {title && <Typography component="h1" variant="h5">{title}</Typography>}
           {fields}
           <ErrorText text={apiError} />

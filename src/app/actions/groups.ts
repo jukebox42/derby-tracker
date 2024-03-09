@@ -29,11 +29,19 @@ export const list = async (filters?: Prisma.GroupWhereInput) => {
  * 
  * Returns a list of groups.
  */
-export const listByMember = async ({ memberId }: { memberId: string }) => {
-  const isOk = await checkAccess([Permission.GROUP_READ, Permission.GROUP_MANAGE]);
+export const listByMember = async (filters: ({ memberId: string } & Omit<Prisma.GroupWhereInput, "id">) | undefined) => {
+  if (!filters?.memberId) {
+    return genericActionErrors.invalid("memberId is required.")
+  }
+  // Stop bad actors from sending in a groupId.
+  if ((filters as any)?.id) {
+    return genericActionErrors.invalid()
+  }
+  const isOk = await checkAccess([Permission.GROUP_READ, Permission.GROUP_MANAGE], filters.memberId);
   if (isOk.type === ActionResponseType.ERROR) {
     return isOk;
   }
+  const { memberId, ...groupFilters } = filters;
 
   const groupMember = await prisma.memberGroup.findMany({
     where: { memberId }
@@ -42,12 +50,12 @@ export const listByMember = async ({ memberId }: { memberId: string }) => {
   if (!groupMember) {
     return genericActionErrors.notFound();
   }
-
   const groups = await prisma.group.findMany({
     where: { 
       id: {
         in: groupMember.map(g => g.groupId)
-      }
+      },
+      ...groupFilters,
     }
   });
 

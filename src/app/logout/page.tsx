@@ -11,5 +11,5 @@ export default function Login() {
     authActions.logout().then(() => router.push(routes.LOGIN.path));
   }, []);
 
-  return <></>;
+  return <>We hate to see you go, but we love to watch you skate away</>;
 }

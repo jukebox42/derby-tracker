@@ -1,18 +1,20 @@
 "use client"
 import { useState } from "react";
+import { MenuItem } from "@mui/material";
 
-import { useConnectedList } from "@/hooks/useConnectedList";
-import { usePage } from "../../context";
 import { Group, MemberGroup, Permission } from "@prisma/client";
 import { ActionResponseType, groupActions } from "@/app/actions";
-import { AddButton, ConnectedForm, ConnectedTable, Pane, TextField, Panel } from "@/components";
 import { groupDefinition } from "@/lib/data/group";
 import { validationSchema } from "@/lib/data/groupMembers";
-import { MenuItem } from "@mui/material";
+import { useStore } from "@/hooks/useStore";
+
+import { AddButton, ConnectedForm, ConnectedTable, Pane, TextField, } from "@/components";
+import { usePage } from "../../context";
 
 export default function Page({ params: { id } }: { params: { id: string }}) {
   const { member } = usePage();
-  const connectedList = useConnectedList<Group, { memberId: string }>(groupActions.listByMember as any, { memberId: member.id });
+  const session = useStore(state => state.session);
+  const canManage = session?.permissions.find(p => p === Permission.GROUP_MANAGE);
   const [groups, setGroups] = useState<Group[]>([]);
   const [isGroupsLoading, setIsGroupsLoading] = useState(false);
 
@@ -28,13 +30,13 @@ export default function Page({ params: { id } }: { params: { id: string }}) {
     setIsGroupsLoading(false);
   };
 
-  const action = (
+  const action = (refresh: () => void) => (
     <ConnectedForm<{ groupId: string }, MemberGroup>
       title="Add Member To Group"
       onSubmit={data => groupActions.addMember(data.groupId, id)}
-      onSuccess={() => connectedList.onRefresh()}
+      onSuccess={refresh}
       schema={validationSchema}
-      variant="unstyled"
+      variant="panel"
       isLoading={isGroupsLoading}
       onOpen={getGroups}
       panelButton={open => (
@@ -57,13 +59,25 @@ export default function Page({ params: { id } }: { params: { id: string }}) {
     </ConnectedForm>
   );
 
-  const columns = ["name", "description", "permissions", "createdAt"];
+  const columns = ["name", "description"];
+
+  // Add admin column and filter
+  if (canManage) {
+    columns.push("createdAt");
+  }
 
   return (
     <Pane>
       <ConnectedTable
-        {...connectedList}
+        api={groupActions.listByMember}
+        searchFields={["name", "description"]}
+        defaultFilters={{ memberId: member.id }}
         actions={action}
+        rowAction={async (row, refresh) => {
+          await groupActions.removeMember(row.id, id);
+          // TODO: check response and show a toast. disable button while removing.
+          refresh();
+        }}
         columnKeys={columns}
         definition={groupDefinition}
       />

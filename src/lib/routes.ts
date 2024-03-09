@@ -31,6 +31,11 @@ export const routes: Routes = {
     permissions: [],
   },
   // User Routes
+  ANNOUNCEMENTS: {
+    label: "Announcements",
+    path: "/announcements",
+    permissions: [Permission.ANNOUNCEMENTS_READ, Permission.ANNOUNCEMENTS_MANAGE],
+  },
   ATTENDANCE: {
     label: "Attendance",
     path: "/attendance",

@@ -21,7 +21,7 @@ export const ConnectedAboutCard = <T,>({ title, entity, lists, definition, isLoa
 
   return (
     <Pane sx={{ gap: 0 }}>
-      <Typography variant="h6">{title}</Typography>
+      <Typography component="h1" variant="h4">{title}</Typography>
       {lists.map(list => (
         <List key={list.title} subheader={<ListSubheader disableGutters>{list.title}</ListSubheader>} dense>
           {list.keys.map(key => (

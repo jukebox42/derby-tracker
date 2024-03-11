@@ -14,7 +14,7 @@ type Props = {
 };
 
 export const Autocomplete = (props: Props) => {
-  const { label, name, required, defaultValue = "", options, getOptionLabel, disabled } = props;
+  const { label, name, required, defaultValue = [], options, getOptionLabel, disabled } = props;
   const { control, isSubmitting } = useField();
 
   return (

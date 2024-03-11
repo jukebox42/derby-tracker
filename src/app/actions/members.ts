@@ -27,6 +27,44 @@ export const list = async (filters?: Prisma.MemberWhereInput) => {
 /**
  * Protected Action
  * 
+ * Returns a list of members by group id.
+ */
+export const listByGroup = async (filters?: { groupId: string } & Omit<Prisma.MemberWhereInput, "id">) => {
+  if (!filters?.groupId) {
+    return genericActionErrors.invalid("groupId is required.");
+  }
+  // Stop bad actors from sending in a memberId.
+  if ((filters as any)?.id) {
+    return genericActionErrors.invalid();
+  }
+  const isOk = await checkAccess([Permission.MEMBER_READ, Permission.MEMBER_MANAGE], filters.groupId);
+  if (isOk.type === ActionResponseType.ERROR) {
+    return isOk;
+  }
+  const { groupId, ...memberFilters } = filters;
+
+  const groupMember = await prisma.memberGroup.findMany({
+    where: { groupId }
+  });
+
+  if (!memberFilters) {
+    return genericActionErrors.notFound();
+  }
+  const members = await prisma.member.findMany({
+    where: { 
+      id: {
+        in: groupMember.map(m => m.memberId)
+      },
+      ...memberFilters,
+    }
+  });
+
+  return formatResponse<Member[]>(members);
+}
+
+/**
+ * Protected Action
+ * 
  * Returns a specific member.
  */
 export const get = async (filters: Prisma.MemberWhereInput) => {

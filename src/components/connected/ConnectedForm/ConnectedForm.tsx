@@ -6,6 +6,7 @@ import { LoadingButton } from "@mui/lab";
 
 import { UseConnectedForm, useConnectedForm } from "@/hooks/useConnectedForm";
 import { ErrorText, Pane, Panel } from "@/components";
+import { Modal } from "@/components/layout/Modal";
 
 export type RenderFuncProps<T> = {
   register: UseFormRegister<T & FieldValues>,
@@ -21,7 +22,7 @@ export type ConnectedFormProps<T, F> = {
   hideCancel?: boolean,
   submitButtonText?: string,
   isLoading?: boolean,
-  variant?: "standard" | "panel" | "unstyled",
+  variant?: "standard" | "panel" | "modal" | "unstyled",
   children?: React.ReactNode | React.ReactNode[],
   onOpen?: () => void,
   panelButton?: (open: () => void) => React.ReactNode,
@@ -58,6 +59,7 @@ export const ConnectedForm = <T extends FieldValues, F>({
     schema,
     onSubmit,
     onSuccess: data => {
+      cancel();
       closeOnSuccess && setIsOpen(false);
       return onSuccess(data);
     }
@@ -99,10 +101,12 @@ export const ConnectedForm = <T extends FieldValues, F>({
     </FormContext.Provider>
   );
 
+  const titleElement = <Typography component="h1" variant="h4">{title}</Typography>;
+
   if (variant === "unstyled") {
     return (
       <>
-        {title && <Typography component="h1" variant="h5">{title}</Typography>}
+        {title && titleElement}
         {fields}
         <ErrorText text={apiError} />
         {submit}
@@ -115,7 +119,7 @@ export const ConnectedForm = <T extends FieldValues, F>({
       <>
         {panelButton?.(() => setIsOpen(true))}
         <Panel isOpen={isOpen} onClose={() => { setIsOpen(false); cancel() }}>
-          {title && <Typography component="h1" variant="h5">{title}</Typography>}
+          {title && titleElement}
           {fields}
           <ErrorText text={apiError} />
           {submit}
@@ -124,9 +128,26 @@ export const ConnectedForm = <T extends FieldValues, F>({
     )
   }
 
+  if (variant === "modal" && title) {
+    return (
+      <>
+        {panelButton?.(() => setIsOpen(true))}
+        <Modal
+          title={titleElement}
+          isOpen={isOpen}
+          onClose={() => { setIsOpen(false); cancel() }}
+          actions={submit}
+        >
+          {fields}
+          <ErrorText text={apiError} />
+        </Modal>
+      </>
+    )
+  }
+
   return (
     <Pane sx={{ gap:1 }}>
-      {title && <Typography component="h1" variant="h5">{title}</Typography>}
+      {title && titleElement}
       {fields}
       <ErrorText text={apiError} />
       {submit}

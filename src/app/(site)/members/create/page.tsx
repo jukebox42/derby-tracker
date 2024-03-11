@@ -24,8 +24,8 @@ export default function Page() {
       <TextField
         required
         label="Real Name"
-        autoFocus
         name="name"
+        autoFocus
       />
 
       <TextField

@@ -131,7 +131,7 @@ export const ConnectedTable = <T,F>(
                 outline: "none",
               },
             ["& .controlled-table-header"]: {
-              backgroundColor: "background.paper",
+              fontWeight: 700,
             },
           }}
           autoHeight

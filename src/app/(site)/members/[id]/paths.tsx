@@ -1,7 +1,7 @@
 import { Route, Routes } from "@/lib/routes";
 import { Permission } from "@prisma/client";
 
-export const routes: Routes = {
+export const paths: Routes = {
   ROOT: {
     label: "Profile",
     path: "",
@@ -17,16 +17,16 @@ export const routes: Routes = {
     path: "/groups",
     permissions: [Permission.GROUP_READ, Permission.GROUP_MANAGE],
   },
-  MANAGE: {
-    label: "Manage",
-    path: "/manage",
+  CONTACT: {
+    label: "Contact",
+    path: "/contact",
     permissions: [Permission.MEMBER_MANAGE],
   },
 }
 
 export const tabsPaths: Route[] = [
-  routes.ROOT,
-  routes.TEAMS,
-  routes.GROUPS,
-  routes.MANAGE,
+  paths.ROOT,
+  paths.TEAMS,
+  paths.GROUPS,
+  paths.CONTACT,
 ];

@@ -1,20 +1,25 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AppBar, Box, Drawer, IconButton, Toolbar, Typography, useMediaQuery } from "@mui/material";
+import { AppBar, Box, Drawer, IconButton, ThemeProvider, Toolbar, useMediaQuery } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 
-import { Loading, Navigation, Header } from "@/components";
+import { Loading, Navigation, Header, Profile } from "@/components";
 import theme from "@/theme";
 import { routes } from "@/lib/routes";
 import { useStore } from "@/hooks/useStore";
+import { darkTheme } from "@/theme/theme";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const { session, member, checkAuth } = useStore(state => ({
+    member: state.activeMember,
+    session: state.session,
+    checkAuth: state.checkAuth,
+  }));
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const matches = useMediaQuery(theme.breakpoints.up("md"));
   const router = useRouter();
-  const checkAuth = useStore(state => state.checkAuth);
 
   const drawerWidth = 260;
 
@@ -30,12 +35,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     handleAuth();
   }, []);
 
-  if (isLoading) {
+  if (isLoading || !member || !session) {
     return <Loading />;
   }
 
   return (
     <Box sx={{ display: "flex" }}>
+      <ThemeProvider theme={darkTheme}>
       <Drawer
         variant={ matches ? "permanent" : "temporary" }
         open={matches || (!matches && isOpen)}
@@ -48,13 +54,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           },
         }}
       >
-        <Box>
-          <Toolbar />
-        </Box>
+        <Box sx={{ flexGrow: 1 }}>
+        <Toolbar />
         <Navigation />
+        </Box>
+        <Profile name={member.name} number={member.number} />
       </Drawer>
       <AppBar
         position="fixed"
+        color="primary"
+        enableColorOnDark
         sx={{
           left: 0,
           zIndex: (theme) => theme.zIndex.drawer + 1,
@@ -75,11 +84,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <Header />
         </Toolbar>
       </AppBar>
+      </ThemeProvider>
       <Box sx={{ flexGrow: 1 }}>
         <Box component="main" p={3}>
           <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            <Typography sx={{ display: { xs: "block", md: "none" } }} variant="h4">Members</Typography>
             {children}
           </Box>
         </Box>

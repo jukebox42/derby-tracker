@@ -1,3 +1,4 @@
+"use client"
 import { Avatar, Box, Button, Card, CardContent, CardMedia, Chip, ChipProps, Divider, Stack, Typography } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 

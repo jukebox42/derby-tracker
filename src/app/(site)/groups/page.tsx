@@ -24,7 +24,6 @@ export default function Page() {
 
   return (
     <>
-      <Typography variant="h4">{routes.GROUPS.label}</Typography>
       <Pane>
         <ConnectedTable
           api={groupActions.list}

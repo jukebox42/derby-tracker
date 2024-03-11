@@ -11,29 +11,30 @@ import { useStore } from "@/hooks/useStore";
 export type AddButtonProps = {
   label: string,
   onClick: () => void,
+  disabled?: boolean,
   permissions?: Permission[],
   api?: () => Promise<ActionResponse<boolean>>
 }
 
-export const AddButton = ({ label, onClick, api, permissions }: AddButtonProps) => {
+export const AddButton = ({ label, onClick, api, disabled, permissions }: AddButtonProps) => {
   const session = useStore(state => state.session);
-  const [disabled, setDisabled] = useState(true);
+  const [intDisabled, setIntDisabled] = useState(true);
 
   const handleCheck = async () => {
     if (permissions && session && hasPermission(permissions, session)) {
-      return setDisabled(false);
+      return setIntDisabled(false);
     }
 
     if (!api) {
-      return setDisabled(true);
+      return setIntDisabled(true);
     }
 
     const result = await api();
     if (result.type === ActionResponseType.ERROR || result.data === false) {
-      return setDisabled(true);
+      return setIntDisabled(true);
     }
 
-    return setDisabled(false);
+    return setIntDisabled(false);
   }
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export const AddButton = ({ label, onClick, api, permissions }: AddButtonProps) 
   return (
     <Button
       startIcon={<AddIcon />}
-      disabled={disabled}
+      disabled={disabled || intDisabled}
       variant="contained"
       color="primary"
       onClick={onClick}

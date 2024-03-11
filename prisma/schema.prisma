@@ -78,7 +78,7 @@ model Member {
   @@map(name: "members")
   id                 String     @default(cuid()) @id @db.VarChar(30)
   name               String     @db.VarChar(200)
-  email              String     @unique @db.VarChar(500)
+  email              String     @unique @db.VarChar(500) // Username
   alias              String     @db.VarChar(200)
   number             String?    @db.VarChar(4)
   level              Level      @default(ROOKIE)
@@ -93,6 +93,7 @@ model Member {
   updatedAt          DateTime   @updatedAt @map(name: "updated_at")
 
   contact            MemberContact?
+  social             MemberSocial?
   charters           Charter[]
   password           Password?
   session            Session?
@@ -101,14 +102,24 @@ model Member {
 
 model MemberContact {
   @@map(name: "member_contacts")
-  phone     String?    @db.VarChar(30)
-  address   String?    @db.VarChar(250)
-  city      String?    @db.VarChar(100)
-  state     String?    @db.VarChar(2)
-  zip       String?    @db.VarChar(10)
+  personalEmail  String?    @unique @db.VarChar(500)
+  phone          String?    @db.VarChar(30)
+  address        String?    @db.VarChar(250)
+  city           String?    @db.VarChar(100)
+  state          String?    @db.VarChar(2)
+  zip            String?    @db.VarChar(10)
 
-  member    Member?    @relation(fields: [memberId], references: [id])
-  memberId  String     @unique @map(name: "member_id")
+  member         Member?    @relation(fields: [memberId], references: [id])
+  memberId       String     @unique @map(name: "member_id")
+}
+
+model MemberSocial {
+  @@map(name: "member_socials")
+  slack          String?    @db.VarChar(100)  @map(name: "slack")
+  facebook       String?    @db.VarChar(250)   @map(name: "facebook")
+
+  member         Member?    @relation(fields: [memberId], references: [id])
+  memberId       String     @unique @map(name: "member_id")
 }
 
 model Group {

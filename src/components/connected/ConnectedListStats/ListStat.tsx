@@ -10,7 +10,7 @@ export type ListStatProps = {
 
 export const ListStat = ({ title, value, isLoading }: ListStatProps) => (
   <Pane sx={{ alignItems: "center" }}>
-    <Typography variant="h6">{title}</Typography>
+    <Typography variant="h3">{title}</Typography>
     {isLoading ? <Skeleton /> : <Typography>{value}</Typography>}
   </Pane>
 );

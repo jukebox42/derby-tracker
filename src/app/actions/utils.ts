@@ -84,5 +84,5 @@ export const genericActionErrors: GenericActionErrors = {
  * 
  * DOES NOT VALIDATE SESSION.
  */
-export const hasPermission = (permissions: Permission[], session: Session) => 
-  !!permissions.find(p => session.permissions.includes(p));
+export const hasPermission = (permissions: Permission[], session?: Session) => 
+  !!permissions.find(p => session?.permissions.includes(p));

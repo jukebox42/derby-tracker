@@ -1,5 +1,5 @@
 "use server"
-import { Group, MemberGroup, Permission, Prisma, Session } from "@prisma/client";
+import { Group, Permission, Prisma, Session } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 import { check as checkAccess, get as getAccess } from "./access";
@@ -29,13 +29,13 @@ export const list = async (filters?: Prisma.GroupWhereInput) => {
  * 
  * Returns a list of groups.
  */
-export const listByMember = async (filters: ({ memberId: string } & Omit<Prisma.GroupWhereInput, "id">) | undefined) => {
+export const listByMember = async (filters?: ({ memberId: string } & Omit<Prisma.GroupWhereInput, "id">)) => {
   if (!filters?.memberId) {
-    return genericActionErrors.invalid("memberId is required.")
+    return genericActionErrors.invalid("memberId is required.");
   }
   // Stop bad actors from sending in a groupId.
   if ((filters as any)?.id) {
-    return genericActionErrors.invalid()
+    return genericActionErrors.invalid();
   }
   const isOk = await checkAccess([Permission.GROUP_READ, Permission.GROUP_MANAGE], filters.memberId);
   if (isOk.type === ActionResponseType.ERROR) {
@@ -127,62 +127,16 @@ export const canManageGroup = async (groupId: string) => {
     return formatResponse(false);
   }
 
-  if(!hasPermission([Permission.GROUP_MANAGE], access.data) || !DO_NOT_EXPORT_canManageGroup(groupId, access.data)) {
+  if(!hasPermission([Permission.GROUP_MANAGE], access.data) || !DO_NOT_IMPORT_canManageGroup(groupId, access.data)) {
     return formatResponse(false);
   }
 
   return formatResponse(true);
 }
 
-
-/**
- * Protected Action
- * 
- * Add a member to a group.
- */
-export const addMember = async (groupId: string, memberId: string) => {
-  const access = await getAccess();
-  if (access.type === ActionResponseType.ERROR) {
-    return genericActionErrors.permissionDenied();
-  }
-
-  if(!hasPermission([Permission.GROUP_MANAGE], access.data) || !DO_NOT_EXPORT_canManageGroup(groupId, access.data)) {
-    return genericActionErrors.permissionDenied();
-  }
-
-  const newRelation = await prisma.memberGroup.create({
-    data: { memberId, groupId }
-  });
-
-  return formatResponse<MemberGroup>(newRelation);
-}
-
-/**
- * Protected Action
- * 
- * Remove a member from a group.
- */
-export const removeMember = async (groupId: string, memberId: string) => {
-  const access = await getAccess();
-  if (access.type === ActionResponseType.ERROR) {
-    return genericActionErrors.permissionDenied();
-  }
-
-  if(!hasPermission([Permission.GROUP_MANAGE], access.data) || !DO_NOT_EXPORT_canManageGroup(groupId, access.data)) {
-    return genericActionErrors.permissionDenied();
-  }
-
-  await prisma.memberGroup.delete({
-    where: { memberId_groupId: { memberId, groupId } }
-  });
-
-  return formatResponse<boolean>(true);
-}
-
-
 // Private Functions
 
-const DO_NOT_EXPORT_canManageGroup = async (groupId: string, session: Session) => {
+export const DO_NOT_IMPORT_canManageGroup = async (groupId: string, session: Session) => {
   if(!hasPermission([Permission.GROUP_ADMIN], session)) {
     return false;
   }

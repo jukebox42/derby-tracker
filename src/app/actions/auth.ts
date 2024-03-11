@@ -19,7 +19,8 @@ const invalidCreds = formatErrorResponse(ActionErrorCodes.AUTH_FAIL_INVALID, "In
  */
 export const login = async (email: string, password: string) => {
   try {
-    const member = await prisma.member.findUnique({ where: { email }});
+    // Don't let them login if they are inactive.
+    const member = await prisma.member.findUnique({ where: { email, active: true }});
     if (!member) {
       return invalidCreds;
     }

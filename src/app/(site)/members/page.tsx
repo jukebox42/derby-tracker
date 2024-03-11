@@ -50,7 +50,6 @@ export default function Page() {
 
   return (
     <>
-      <Typography variant="h4">{routes.MEMBERS.label}</Typography>
       <Pane>
         <ConnectedTable
           api={memberActions.list}

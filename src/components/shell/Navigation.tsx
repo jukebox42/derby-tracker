@@ -26,8 +26,6 @@ export const Navigation = (props: Props) => {
 
   return (
     <>
-      <Profile name={member.name} number={member.number} />
-      <Divider />
       <List>
         <ListSubheader>Navigation</ListSubheader>
         {cleanNavRoutes.map((route) => (

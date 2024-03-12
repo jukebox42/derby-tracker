@@ -1,9 +1,8 @@
 "use client";
-import { adminRoutes, filterRoutes, navigationRoutes } from "@/lib/routes";
-import { Profile } from "./Profile";
+import { adminRoutes, filterRoutes, navigationRoutes } from "#/lib/routes";
 import { Divider, List, ListItem, ListItemButton, ListItemText, ListSubheader } from "@mui/material"
 import { usePathname, useRouter } from "next/navigation";
-import { useStore } from "@/hooks/useStore";
+import { useStore } from "#/hooks/useStore";
 
 type Props = {
 

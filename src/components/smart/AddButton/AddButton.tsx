@@ -4,9 +4,9 @@ import { Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
 import { Permission } from "@prisma/client";
-import { ActionResponse, ActionResponseType } from "@/app/actions";
-import { hasPermission } from "@/app/actions";
-import { useStore } from "@/hooks/useStore";
+import { ActionResponse, ActionResponseType } from "#/app/actions";
+import { hasPermission } from "#/app/actions";
+import { useStore } from "#/hooks/useStore";
 
 export type AddButtonProps = {
   label: string,

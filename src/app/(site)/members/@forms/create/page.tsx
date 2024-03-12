@@ -3,11 +3,11 @@ import { InputAdornment, MenuItem } from "@mui/material";
 import { useRouter } from "next/navigation";
 
 import { Level, Member } from "@prisma/client";
-import { memberActions } from "@/app/actions";
-import { positions, levels, validationSchema } from "@/lib/data/members";
+import { memberActions } from "#/app/actions";
+import { positions, levels, validationSchema } from "#/lib/data/members";
 
-import { ConnectedForm, TextField } from "@/components";
-import { routes } from "@/lib/routes";
+import { ConnectedForm, TextField } from "#/components";
+import { routes } from "#/lib/routes";
 
 type CreateMemberData = Omit<Member, "id" | "createdAt" | "updatedAt">;
 
@@ -20,6 +20,7 @@ export default function Page() {
       onSubmit={data => memberActions.create(data)}
       onSuccess={data => router.push(`${routes.MEMBERS.path}/${data.id}`)}
       schema={validationSchema}
+      variant="slotModal"
     >
       <TextField
         required

@@ -2,7 +2,7 @@ import * as Yup from "yup";
 
 import { Definition } from "./types";
 
-import { renderValue } from "@/components";
+import { renderValue } from "#/components";
 import { routes } from "../routes";
 
 export const positions: {[key: string]: string} = {

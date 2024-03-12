@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react";
 
-import { ActionResponse, ActionResponseType } from "@/app/actions";
+import { ActionResponse, ActionResponseType } from "#/app/actions";
 
 export type UseConnectedListProps<T,F> = {
   api: (filters?: F) => Promise<ActionResponse<T[]>>,

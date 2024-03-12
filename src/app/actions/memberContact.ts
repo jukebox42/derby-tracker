@@ -2,7 +2,7 @@
 
 import { MemberContact, Permission, Prisma } from "@prisma/client";
 
-import prisma from "@/lib/prisma";
+import prisma from "#/lib/prisma";
 
 import { check as checkAccess } from "./access";
 import { ActionResponseType, formatResponse, genericActionErrors } from ".";

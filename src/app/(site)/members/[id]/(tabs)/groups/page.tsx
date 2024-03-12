@@ -3,12 +3,12 @@ import { useState } from "react";
 import { MenuItem } from "@mui/material";
 
 import { Group, MemberGroup, Permission } from "@prisma/client";
-import { ActionResponseType, groupActions, hasPermission, memberGroupActions } from "@/app/actions";
-import { groupDefinition } from "@/lib/data/group";
-import { groupIdValidationSchema } from "@/lib/data/groupMembers";
-import { useStore } from "@/hooks/useStore";
+import { ActionResponseType, groupActions, hasPermission, memberGroupActions } from "#/app/actions";
+import { groupDefinition } from "#/lib/data/group";
+import { groupIdValidationSchema } from "#/lib/data/groupMembers";
+import { useStore } from "#/hooks/useStore";
 
-import { AddButton, ConnectedForm, ConnectedTable, Pane, TextField, } from "@/components";
+import { AddButton, ConnectedForm, ConnectedTable, Pane, TextField, } from "#/components";
 import { usePage } from "../../context";
 
 export default function Page({ params: { id } }: { params: { id: string }}) {

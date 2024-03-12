@@ -1,8 +1,8 @@
 "use client";
 import { Stack } from "@mui/material";
 
-import { memberDefinition as md } from "@/lib/data/members";
-import { Pane, TitlePane } from "@/components";
+import { memberDefinition as md } from "#/lib/data/members";
+import { Pane, TitlePane } from "#/components";
 
 import { usePage } from "../context";
 

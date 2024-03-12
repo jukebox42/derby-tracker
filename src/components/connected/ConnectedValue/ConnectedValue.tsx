@@ -1,7 +1,7 @@
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 
-import Link from "@/components/Link/Link";
+import Link from "#/components/Link/Link";
 
 const NULL_VALUE = "-";
 

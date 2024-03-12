@@ -4,9 +4,9 @@ import { Control, FieldErrors, FieldValues, UseFormRegister } from "react-hook-f
 import { Box, Button, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
-import { UseConnectedForm, useConnectedForm } from "@/hooks/useConnectedForm";
-import { ErrorText, Pane, Panel } from "@/components";
-import { Modal } from "@/components/layout/Modal";
+import { UseConnectedForm, useConnectedForm } from "#/hooks/useConnectedForm";
+import { ErrorText, Pane, Panel } from "#/components";
+import { Modal } from "#/components/layout/Modal";
 
 export type RenderFuncProps<T> = {
   register: UseFormRegister<T & FieldValues>,
@@ -22,7 +22,7 @@ export type ConnectedFormProps<T, F> = {
   hideCancel?: boolean,
   submitButtonText?: string,
   isLoading?: boolean,
-  variant?: "standard" | "panel" | "modal" | "unstyled",
+  variant?: "standard" | "panel" | "modal" | "slotModal" | "unstyled",
   children?: React.ReactNode | React.ReactNode[],
   onOpen?: () => void,
   panelButton?: (open: () => void) => React.ReactNode,
@@ -46,7 +46,7 @@ export const ConnectedForm = <T extends FieldValues, F>({
   isLoading = false,
   variant = "standard"
 }: ConnectedFormProps<T, F>) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(variant === "slotModal");
   const {
     cancel,
     register,
@@ -118,7 +118,7 @@ export const ConnectedForm = <T extends FieldValues, F>({
     return (
       <>
         {panelButton?.(() => setIsOpen(true))}
-        <Panel isOpen={isOpen} onClose={() => { setIsOpen(false); cancel() }}>
+        <Panel isOpen={isOpen} onClose={handleCancel}>
           {title && titleElement}
           {fields}
           <ErrorText text={apiError} />
@@ -135,8 +135,37 @@ export const ConnectedForm = <T extends FieldValues, F>({
         <Modal
           title={titleElement}
           isOpen={isOpen}
-          onClose={() => { setIsOpen(false); cancel() }}
+          onClose={handleCancel}
           actions={submit}
+        >
+          {fields}
+          <ErrorText text={apiError} />
+        </Modal>
+      </>
+    )
+  }
+
+  if (variant === "slotModal" && title) {
+    return (
+      <>
+        <Modal
+          title={title}
+          isOpen={true}
+          onClose={handleCancel}
+          actions={<>
+            {!hideCancel && <Button disabled={isSubmitting} onClick={handleCancel}>Cancel</Button>}
+            <LoadingButton
+              type="submit"
+              variant="contained"
+              loading={isSubmitting}
+              disabled={isLoading}
+              onClick={handleSubmit}
+              fullWidth={hideCancel}
+              size={hideCancel ? "large" : undefined}
+            >
+              {submitButtonText}
+            </LoadingButton>
+          </>}
         >
           {fields}
           <ErrorText text={apiError} />

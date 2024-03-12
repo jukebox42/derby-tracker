@@ -1,6 +1,6 @@
 "use server"
 import { MemberGroup, Permission } from "@prisma/client";
-import prisma from "@/lib/prisma";
+import prisma from "#/lib/prisma";
 
 import { get as getAccess } from "./access";
 import { ActionResponseType, formatResponse, genericActionErrors, hasPermission } from ".";

@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react";
 
-import { ActionResponse, ActionResponseType } from "@/app/actions";
+import { ActionResponse, ActionResponseType } from "#/app/actions";
 
 export type UseConnectedEntity<T, F> = {
   isLoading: boolean,

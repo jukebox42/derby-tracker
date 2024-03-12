@@ -3,13 +3,13 @@ import React, { useCallback } from "react";
 import { Box, Button, Stack, TextField, debounce } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridDeleteIcon, GridNoRowsOverlay, GridOverlay, gridClasses } from "@mui/x-data-grid";
 
-import { Definition } from "@/lib/data/types";
-import { formatColumn } from "@/lib/data/utils";
+import { Definition } from "#/lib/data/types";
+import { formatColumn } from "#/lib/data/utils";
 
 import { ErrorText } from "../..";
-import { UseConnectedListProps, useConnectedList } from "@/hooks/useConnectedList";
-import { FilterMenuBoolean, FilterMenuBooleanProps } from "@/components/FilterMenuBoolean";
-import { FilterMenuString, FilterMenuStringProps } from "@/components/FilterMenuString";
+import { UseConnectedListProps, useConnectedList } from "#/hooks/useConnectedList";
+import { FilterMenuBoolean, FilterMenuBooleanProps } from "#/components/FilterMenuBoolean";
+import { FilterMenuString, FilterMenuStringProps } from "#/components/FilterMenuString";
 
 export type ConnectedFilterControls = 
   (Omit<FilterMenuStringProps, "onChange"> & { type: "string", name: string }) |

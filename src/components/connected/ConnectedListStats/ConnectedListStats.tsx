@@ -1,7 +1,7 @@
 "use client"
 import { Box } from "@mui/material";
 import { ListStat, ListStatProps } from "./ListStat";
-import { UseConnectedList } from "@/hooks/useConnectedList";
+import { UseConnectedList } from "#/hooks/useConnectedList";
 
 export type ListStatsProps<T> = {
   stats: ListStatProps[],

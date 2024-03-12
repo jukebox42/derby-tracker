@@ -3,15 +3,15 @@ import React from "react";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { Button, Stack } from "@mui/material";
 
-import { hasPermission, memberActions } from "@/app/actions";
-import { ErrorText, Loading, PageError, ProfilePreviewCard, PromptButton, TabButtonGroup } from "@/components";
-import { useConnectedEntity } from "@/hooks/useConnectedEntity";
-import { memberDefinition as md } from "@/lib/data/members";
+import { hasPermission, memberActions } from "#/app/actions";
+import { ErrorText, Loading, PageError, ProfilePreviewCard, PromptButton, TabButtonGroup } from "#/components";
+import { useConnectedEntity } from "#/hooks/useConnectedEntity";
+import { memberDefinition as md } from "#/lib/data/members";
 import { Member, Permission, Prisma } from "@prisma/client";
 import { PageProvider } from "./context";
-import { filterRoutes, routes } from "@/lib/routes";
+import { filterRoutes, routes } from "#/lib/routes";
 import { tabsPaths } from "./paths";
-import { useStore } from "@/hooks/useStore";
+import { useStore } from "#/hooks/useStore";
 
 export default function Layout({
   children,

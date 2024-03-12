@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { Button, ButtonProps, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 import { Permission } from "@prisma/client";
-import { ActionResponse, ActionResponseType } from "@/app/actions";
-import { hasPermission } from "@/app/actions";
-import { useStore } from "@/hooks/useStore";
+import { ActionResponse, ActionResponseType } from "#/app/actions";
+import { hasPermission } from "#/app/actions";
+import { useStore } from "#/hooks/useStore";
 
 export type PromptButtonProps = {
   label: string,

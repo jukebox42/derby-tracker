@@ -1,10 +1,10 @@
 "use server"
 import { Group, Permission, Prisma, Session } from "@prisma/client";
-import prisma from "@/lib/prisma";
+import prisma from "#/lib/prisma";
 
 import { check as checkAccess, get as getAccess } from "./access";
 import { ActionResponseType, formatResponse, genericActionErrors, hasPermission } from ".";
-import { validationSchema } from "@/lib/data/group";
+import { validationSchema } from "#/lib/data/group";
 
 /**
  * Protected Action
@@ -113,6 +113,37 @@ export const create = async (group: Omit<Group, "id" | "createdAt" | "updatedAt"
   });
 
   return formatResponse<Group>(newGroup);
+}
+
+/**
+ * Protected Action
+ * 
+ * Edit an existing group
+ */
+export const edit = async (id: string, group: Omit<Group, "id" | "createdAt" | "updatedAt">) => {
+  const isOk = await checkAccess([Permission.GROUP_MANAGE]);
+  if (isOk.type === ActionResponseType.ERROR) {
+    return isOk;
+  }
+
+  const cleanGroup = {
+    name: group.name,
+    description: group.description,
+    permissions: group.permissions,
+  }
+
+  try {
+    await validationSchema.validate(cleanGroup);
+  } catch(e) {
+    return genericActionErrors.invalid("" + e);
+  }
+
+  const editGroup = await prisma.group.update({
+    where: { id },
+    data: { ...cleanGroup }
+  });
+
+  return formatResponse<Group>(editGroup);
 }
 
 /**

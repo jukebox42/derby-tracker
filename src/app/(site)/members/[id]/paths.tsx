@@ -1,4 +1,4 @@
-import { Route, Routes } from "@/lib/routes";
+import { Route, Routes } from "#/lib/routes";
 import { Permission } from "@prisma/client";
 
 export const paths: Routes = {

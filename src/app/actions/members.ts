@@ -1,8 +1,8 @@
 "use server"
 import { Member, Permission, Prisma } from "@prisma/client";
 
-import prisma from "@/lib/prisma";
-import { validationSchema } from "@/lib/data/members";
+import prisma from "#/lib/prisma";
+import { validationSchema } from "#/lib/data/members";
 import { check as checkAccess } from "./access";
 import { ActionResponseType, formatResponse, genericActionErrors } from "./utils";
 

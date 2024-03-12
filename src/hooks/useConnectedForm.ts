@@ -4,7 +4,7 @@ import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { ActionResponse, ActionResponseType } from "@/app/actions";
+import { ActionResponse, ActionResponseType } from "#/app/actions";
 
 export type UseConnectedForm<T, F> = {
   onSubmit: (data: T) => Promise<ActionResponse<F>>,
@@ -27,6 +27,7 @@ export const useConnectedForm = <T extends FieldValues, F>(
   } = useForm<T>({ resolver: yupResolver(schema) });
 
   const cancel = () => {
+    setAPIError("");
     setIsSubmitting(false);
     reset();
   }

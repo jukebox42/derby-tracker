@@ -2,7 +2,7 @@
 import { StateCreator } from "zustand";
 
 import { Member, Session, } from "@prisma/client"
-import { memberActions, authActions, ActionResponseType } from "@/app/actions";
+import { memberActions, authActions, ActionResponseType } from "#/app/actions";
 
 
 export type AppStore = {

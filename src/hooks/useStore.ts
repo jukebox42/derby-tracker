@@ -1,5 +1,5 @@
 "use client";
-import { AppStore, createAppStore } from "@/store/appStore";
+import { AppStore, createAppStore } from "#/store/appStore";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 

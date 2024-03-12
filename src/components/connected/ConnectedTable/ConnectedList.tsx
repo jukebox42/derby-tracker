@@ -3,11 +3,11 @@ import React from "react";
 import { Avatar, Box, Button, Divider, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Stack, Typography } from "@mui/material";
 import { DataGrid, GridNoRowsOverlay, GridOverlay, gridClasses } from "@mui/x-data-grid";
 
-import { Definition } from "@/lib/data/types";
-import { formatColumn } from "@/lib/data/utils";
+import { Definition } from "#/lib/data/types";
+import { formatColumn } from "#/lib/data/utils";
 
 import { ErrorText } from "../..";
-import { UseConnectedList } from "@/hooks/useConnectedList";
+import { UseConnectedList } from "#/hooks/useConnectedList";
 
 export type ConnectedTableProps<T> = {
   actions?: React.ReactNode | React.ReactNode[],

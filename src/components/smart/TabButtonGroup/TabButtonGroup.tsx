@@ -1,7 +1,7 @@
 import { Stack } from "@mui/material"
 
-import { useTab } from "@/hooks/useTab";
-import { Route } from "@/lib/routes";
+import { useTab } from "#/hooks/useTab";
+import { Route } from "#/lib/routes";
 
 import { TabButton } from "./TabButton"
 

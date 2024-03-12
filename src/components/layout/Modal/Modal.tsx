@@ -21,11 +21,11 @@ export const Modal = ({ title, actions, isOpen = false, children, onClose }: Mod
       fullWidth
       maxWidth="md"
     >
-      <DialogTitle>{title}</DialogTitle>
+      <DialogTitle variant="h4" sx={{ p: 3, pb: 1 }}>{title}</DialogTitle>
       <DialogContent>
         {children}
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ p: 3, pt: 0 }}>
         {actions}
       </DialogActions>
     </Dialog>

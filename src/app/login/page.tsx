@@ -3,17 +3,18 @@ import { Avatar, Container, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useRouter } from "next/navigation";
 
-import { ConnectedForm, Pane, TextField } from "@/components";
-import { authActions } from "@/app/actions";
-import { authValidationSchema } from "@/lib/data/auth";
-import { routes } from "@/lib/routes";
+import { ConnectedForm, TextField } from "#/components";
+import { authActions } from "#/app/actions";
+import { authValidationSchema } from "#/lib/data/auth";
+import { routes } from "#/lib/routes";
+import { Card } from "#/ui/common";
 
 export default function Login() {
   const router = useRouter();
 
   return (
     <Container component="main" maxWidth="xs" sx={{ height: "100vh" }}>
-      <Pane
+      <Card
         sx={{
           gap: 0,
           alignItems: "center",
@@ -51,7 +52,7 @@ export default function Login() {
             name="password"
           />
         </ConnectedForm>
-      </Pane>
+      </Card>
     </Container>
   );
 };

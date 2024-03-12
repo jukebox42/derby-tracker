@@ -1,14 +1,15 @@
 "use server"
 import { cookies } from "next/headers"
 import { default as bcrypt } from "bcryptjs";
-import { Session } from "@prisma/client";
+import { Member, Session } from "@prisma/client";
 
-import { getSession, createSession, deleteSession } from "@/lib/db/session";
-import prisma from "@/lib/prisma";
+import { getSession, createSession, deleteSession } from "#/lib/db/session";
+import prisma from "#/lib/prisma";
 import { CookieSession } from "./types";
-import { ActionErrorCodes, formatErrorResponse, formatResponse } from "./utils";
-import { createCookie } from "@/lib/db/auth";
-import { SESSION_COOKIE_NAME } from "@/lib/db/utils";
+import { ActionErrorCodes, ActionResponseType, formatErrorResponse, formatResponse } from "./utils";
+import { createCookie } from "#/lib/db/auth";
+import { SESSION_COOKIE_NAME } from "#/lib/db/utils";
+import { memberActions } from ".";
 
 const invalidCreds = formatErrorResponse(ActionErrorCodes.AUTH_FAIL_INVALID, "Invalid credentials.");
 
@@ -71,16 +72,32 @@ export const check = async () => {
 
     const session = await getSession(cookieData.id, cookieData.memberId);
     if(!session) {
-      cookies().delete(SESSION_COOKIE_NAME);
       return invalidSession;
     }
-
-    createCookie({ id: session.id, memberId: session.memberId });
 
     return formatResponse<Session>(session);
   } catch (e) {
     return formatErrorResponse(ActionErrorCodes.SESSION_ERROR, "" + e);
   }
+}
+
+/**
+ * Unprotected Action
+ *
+ * Handles getting the active session and member. Returns false if there isn't one
+ */
+export const get = async () => {
+  const session = await check();
+  if (session.type === ActionResponseType.ERROR) {
+    return invalidSession;
+  }
+  // We make sure they are active here. This prevents disabled users from staying authenticated.
+  const member = await memberActions.get({ id: session.data.memberId, active: true });
+  if (member.type === ActionResponseType.ERROR) {
+    return invalidSession;
+  }
+
+  return formatResponse<{ session: Session, member: Member }>({ session: session.data, member: member.data });
 }
 
 /**

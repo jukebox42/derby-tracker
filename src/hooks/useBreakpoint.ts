@@ -1,4 +1,4 @@
-import theme from "@/theme";
+import theme from "#/theme";
 import { useMediaQuery } from "@mui/material";
 
 export const useBreakpoints = () => {

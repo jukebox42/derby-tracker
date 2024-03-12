@@ -1,21 +1,17 @@
 "use client";
-import { useRouter } from "next/navigation";
-
-import { routes } from "@/lib/routes";
 import { Permission } from "@prisma/client";
-import { groupActions } from "@/app/actions";
-import { groupDefinition } from "@/lib/data/group";
-import { useStore } from "@/hooks/useStore";
 
-import { Pane, ConnectedTable, AddButton } from "@/components";
-import { Typography } from "@mui/material";
+import { useSite } from "#/context";
+import { routes } from "#/lib/routes";
+import { groupActions, hasPermission } from "#/app/actions";
+import { groupDefinition } from "#/lib/data/group";
+import { Pane, ConnectedTable } from "#/components";
+import { PermissionButton } from "#/ui/smart";
 
 export default function Page() {
-  const router = useRouter();
-  const session = useStore(state => state.session);
-  const canManage = session?.permissions.find(p => p === Permission.GROUP_MANAGE);
+  const { session } = useSite();
+  const canManage = hasPermission([Permission.GROUP_MANAGE], session);
   const columns = ["name", "description"];
-  const handleCreate = () => router.push(routes.GROUPS_CREATE.path);
 
   // Add admin column and filter
   if (canManage) {
@@ -29,7 +25,13 @@ export default function Page() {
           api={groupActions.list}
           searchFields={["name", "description"]}
           actions={
-            <AddButton permissions={[Permission.GROUP_MANAGE]} label="Add Group" onClick={handleCreate} />
+            <PermissionButton
+              permissions={[Permission.GROUP_MANAGE]}
+              path={routes.GROUPS_CREATE.path}
+              purpose="create"
+            >
+              Add Group
+            </PermissionButton>
           }
           columnKeys={columns}
           definition={groupDefinition}

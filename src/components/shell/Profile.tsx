@@ -1,10 +1,11 @@
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Typography } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useRouter } from "next/navigation";
-import { routes } from "@/lib/routes";
-import { useStore } from "@/hooks/useStore";
+
+import { routes } from "#/lib/routes";
+import { useStore } from "#/hooks/useStore";
 
 type ProfileProps = {
   name: string;

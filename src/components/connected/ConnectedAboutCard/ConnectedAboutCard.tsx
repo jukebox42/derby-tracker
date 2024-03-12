@@ -1,9 +1,9 @@
 "use client"
 import { List, ListItem, ListSubheader, Typography } from "@mui/material";
 
-import { UseConnectedEntity } from "@/hooks/useConnectedEntity";
-import { Pane } from "@/components";
-import { Definition } from "@/lib/data/types";
+import { UseConnectedEntity } from "#/hooks/useConnectedEntity";
+import { Pane } from "#/components";
+import { Definition } from "#/lib/data/types";
 
 export type ConnectedAboutCardProps<T> = {
   title: string,

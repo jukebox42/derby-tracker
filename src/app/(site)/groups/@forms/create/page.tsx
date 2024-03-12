@@ -2,27 +2,28 @@
 import { useRouter } from "next/navigation";
 
 import { Group } from "@prisma/client";
-import { groupActions } from "@/app/actions";
-import { permissions, validationSchema } from "@/lib/data/group";
+import { groupActions } from "#/app/actions";
+import { permissions, validationSchema } from "#/lib/data/group";
 
-import { Autocomplete, ConnectedForm, TextField } from "@/components";
-import { routes } from "@/lib/routes";
+import { Autocomplete, ConnectedForm, TextField } from "#/components";
+import { routes } from "#/lib/routes";
 
 type CreateGroupData = Omit<Group, "id" | "createdAt" | "updatedAt">;
 
 export default function Page() {
   const router = useRouter();
   return (
-    <ConnectedForm<CreateGroupData,Group>
+    <ConnectedForm<CreateGroupData, Group>
       title={routes.GROUPS_CREATE.label}
       onCancel={() => router.push(routes.GROUPS.path)}
       onSubmit={data => groupActions.create(data)}
       onSuccess={data => router.push(`${routes.GROUPS.path}/${data.id}`)}
       schema={validationSchema}
+      variant="slotModal"
     >
       <TextField
         required
-        label="Name"
+        label="Group Name"
         name="name"
         autoFocus
       />

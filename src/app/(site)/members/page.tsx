@@ -1,19 +1,19 @@
-"use client";
-import { useRouter } from "next/navigation";
-
-import { routes } from "@/lib/routes";
+"use client"
 import { Permission } from "@prisma/client";
-import { memberActions } from "@/app/actions";
-import { levels, memberDefinition, positions } from "@/lib/data/members";
 
-import { Pane, ConnectedTable, AddButton, ConnectedFilterControls } from "@/components";
-import { useStore } from "@/hooks/useStore";
-import { Typography } from "@mui/material";
+import { useSite } from "#/context";
+import { routes } from "#/lib/routes";
+import { hasPermission, memberActions } from "#/app/actions";
+import { levels, memberDefinition, positions } from "#/lib/data/members";
+
+import { Pane, ConnectedTable, ConnectedFilterControls } from "#/components";
+import { PermissionButton } from "#/ui/smart";
 
 export default function Page() {
-  const router = useRouter();
-  const session = useStore(state => state.session);
-  const canManage = session?.permissions.find(p => p === Permission.MEMBER_MANAGE);
+  // TODO: do permissions check and redirect somewhere.
+  const { session } = useSite();
+  const canManage = hasPermission([Permission.MEMBER_MANAGE], session);
+
   const columns = ["alias", "number", "name", "level", "isOnLoa", "preferredPosition"];
   const filterControls: ConnectedFilterControls[] = [
     {
@@ -46,8 +46,6 @@ export default function Page() {
     });
   }
 
-  const handleCreate = () => router.push(routes.MEMBERS_CREATE.path);
-
   return (
     <>
       <Pane>
@@ -57,7 +55,13 @@ export default function Page() {
           searchFields={["name", "alias", "number"]}
           filterControls={filterControls}
           actions={
-            <AddButton permissions={[Permission.MEMBER_MANAGE]} label="Add Member" onClick={handleCreate} />
+            <PermissionButton
+              permissions={[Permission.MEMBER_MANAGE]}
+              purpose="create"
+              path={routes.MEMBERS_CREATE.path}
+            >
+              Add Member
+            </PermissionButton>
           }
           columnKeys={columns}
           definition={memberDefinition}

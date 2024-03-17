@@ -6,7 +6,7 @@ import { useField } from ".";
 type Props = {
   name: string,
   label: string,
-  defaultValue?: string,
+  defaultValue?: string | null,
 } & Omit<TextFieldProps, "label" | "name" | "defaultValue" | "onChange" | "helperText" | "error">
 
 export const TextField = (props: Props) => {

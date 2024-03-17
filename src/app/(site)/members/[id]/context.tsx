@@ -2,33 +2,27 @@
 
 import React, { useState } from "react";
 
-import { Member, MemberContact } from "@prisma/client";
+import { MemberWithInfo } from "#/app/actions/members";
 
 type ContextProps = {
-  member: Member,
-  memberContact?: MemberContact,
-  setMember: (data: Member) => void,
-  setMemberContact: (data: MemberContact) => void,
+  member: MemberWithInfo,
+  setMember: React.Dispatch<React.SetStateAction<MemberWithInfo>>,
 }
 
 const PageContext = React.createContext<ContextProps | undefined>(undefined);
 
 type Props = {
-  member: Member,
-  memberContact?: MemberContact,
+  member: MemberWithInfo,
   children: React.ReactNode,
 }
 
-export const PageProvider = ({ member, memberContact, children }: Props) => {
+export const PageProvider = ({ member, children }: Props) => {
   const [intMember, setIntMember] = useState(member);
-  const [intMemberContact, setIntMemberContact] = useState(memberContact);
 
   return (
     <PageContext.Provider value={{
       member: intMember,
-      setMember: (data: Member) => setIntMember(data),
-      memberContact: intMemberContact,
-      setMemberContact: (data: MemberContact) => setIntMemberContact(data),
+      setMember: setIntMember,
     }}>
       {children}
     </PageContext.Provider>

@@ -6,6 +6,13 @@ import { validationSchema } from "#/lib/data/members";
 import { check as checkAccess, get as getAccess } from "./access";
 import { ActionResponseType, formatThrownErrorResponse, formatResponse, genericActionErrors, hasPermission } from "./utils";
 
+const memberWithInfo = Prisma.validator<Prisma.MemberDefaultArgs>()({
+  include: { contact: true, social: true },
+});
+
+export type MemberWithInfo = Prisma.MemberGetPayload<typeof memberWithInfo>;
+
+
 /**
  * Protected Action
  * 
@@ -100,7 +107,7 @@ export const get = async (filters: Prisma.MemberWhereInput) => {
       return genericActionErrors.notFound();
     }
 
-    return formatResponse<Member>(member);
+    return formatResponse<MemberWithInfo>(member);
   } catch (e) {
     return formatThrownErrorResponse(e);
   }

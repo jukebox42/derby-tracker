@@ -100,22 +100,6 @@ export const memberDefinition: Definition = {
     renderCell: params => renderValue.boolean(params.value, true),
     validation: () => Yup.boolean(),
   },
-  slackUsername: {
-    key: "slackUsername",
-    label: "Slack",
-    type: "string",
-    render: params => renderValue.link(params.slackUsername, `http://slack.com/@${params.slackUsername}`, true),
-    renderCell: params => renderValue.link(params.value, `http://slack.com/@${params.value}`, true),
-    validation: () => Yup.string().nullable(),
-  },
-  facebookLink: {
-    key: "facebookLink",
-    label: "Facebook",
-    type: "link",
-    render: params => renderValue.link(params.facebookLink, params.facebookLink, true),
-    renderCell: params => renderValue.link(params.value, params.value, true),
-    validation: () => Yup.string().nullable(),
-  },
   updatedAt: {
     key: "updatedAt",
     label: "Updated",

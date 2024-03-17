@@ -3,7 +3,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import { Link } from "#/ui/common";
 
-const NULL_VALUE = "-";
+export const NULL_VALUE = "-";
 
 export type ConnectedValueProps = {
   type: "string" | "number" | "link" | "datetime" | "boolean" | "enum" | "array"

@@ -4,6 +4,7 @@ import { Button } from "@mui/material";
 
 import { ProfilePreviewCard } from "#/ui/common";
 import { memberDefinition as md } from "#/lib/data/members";
+import { memberSocialDefinition as msd } from "#/lib/data/memberSocial";
 import { useSite } from "#/context";
 import { PromptButton } from "#/ui/smart";
 import { ActionResponseType, memberActions } from "#/app/actions";
@@ -37,9 +38,10 @@ export const Preview = () => {
   ];
 
   const socialList = [
-    ...(hasAccess ? [{ label: md.email.label, value: member.email }] : []),
-    { label: md.slackUsername.label, value: md.slackUsername.render(member) },
-    { label: md.facebookLink.label, value: md.facebookLink.render(member) },
+    { label: md.email.label, value: member.email },
+    // TODO: this stuff isnt on the member object anymore. get it from the social object. aka make one of those
+    { label: msd.slack.label, value: msd.slack.render(member.social) },
+    { label: msd.facebook.label, value: msd.facebook.render(member.social) },
   ];
 
   const adminList = [

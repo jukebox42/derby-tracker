@@ -3,7 +3,7 @@ import { MemberGroup, Permission } from "@prisma/client";
 import prisma from "#/lib/prisma";
 
 import { get as getAccess } from "./access";
-import { ActionResponseType, formatResponse, genericActionErrors, hasPermission } from ".";
+import { ActionResponseType, formatResponse, formatThrownErrorResponse, genericActionErrors, hasPermission } from ".";
 import { DO_NOT_IMPORT_canManageGroup } from "./groups";
 
 /**
@@ -21,11 +21,15 @@ export const addMember = async (groupId: string, memberId: string) => {
     return genericActionErrors.permissionDenied();
   }
 
-  const newRelation = await prisma.memberGroup.create({
-    data: { memberId, groupId }
-  });
+  try {
+    const newRelation = await prisma.memberGroup.create({
+      data: { memberId, groupId }
+    });
 
-  return formatResponse<MemberGroup>(newRelation);
+    return formatResponse<MemberGroup>(newRelation);
+  } catch(e) {
+    return formatThrownErrorResponse(e);
+  }
 }
 
 /**
@@ -43,9 +47,13 @@ export const removeMember = async (groupId: string, memberId: string) => {
     return genericActionErrors.permissionDenied();
   }
 
-  await prisma.memberGroup.delete({
-    where: { memberId_groupId: { memberId, groupId } }
-  });
+  try {
+    await prisma.memberGroup.delete({
+      where: { memberId_groupId: { memberId, groupId } }
+    });
 
-  return formatResponse<boolean>(true);
+    return formatResponse<boolean>(true);
+  } catch(e) {
+    return formatThrownErrorResponse(e);
+  }
 }

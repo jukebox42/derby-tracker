@@ -3,7 +3,7 @@ import { Group, Permission, Prisma, Session } from "@prisma/client";
 import prisma from "#/lib/prisma";
 
 import { check as checkAccess, get as getAccess } from "./access";
-import { ActionResponseType, formatResponse, genericActionErrors, hasPermission } from ".";
+import { ActionResponseType, formatResponse, formatThrownErrorResponse, genericActionErrors, hasPermission } from ".";
 import { validationSchema } from "#/lib/data/group";
 
 /**
@@ -17,11 +17,15 @@ export const list = async (filters?: Prisma.GroupWhereInput) => {
     return isOk;
   }
 
-  const groups = await prisma.group.findMany({
-    where: filters
-  });
+  try {
+    const groups = await prisma.group.findMany({
+      where: filters
+    });
 
-  return formatResponse<Group[]>(groups);
+    return formatResponse<Group[]>(groups);
+  } catch(e) {
+    return formatThrownErrorResponse(e);
+  }
 }
 
 /**
@@ -43,23 +47,27 @@ export const listByMember = async (filters?: ({ memberId: string } & Omit<Prisma
   }
   const { memberId, ...groupFilters } = filters;
 
-  const groupMember = await prisma.memberGroup.findMany({
-    where: { memberId }
-  });
+  try {
+    const groupMember = await prisma.memberGroup.findMany({
+      where: { memberId }
+    });
 
-  if (!groupMember) {
-    return genericActionErrors.notFound();
-  }
-  const groups = await prisma.group.findMany({
-    where: { 
-      id: {
-        in: groupMember.map(g => g.groupId)
-      },
-      ...groupFilters,
+    if (!groupMember) {
+      return genericActionErrors.notFound();
     }
-  });
+    const groups = await prisma.group.findMany({
+      where: { 
+        id: {
+          in: groupMember.map(g => g.groupId)
+        },
+        ...groupFilters,
+      }
+    });
 
-  return formatResponse<Group[]>(groups);
+    return formatResponse<Group[]>(groups);
+  } catch(e) {
+    return formatThrownErrorResponse(e);
+  }
 }
 
 /**
@@ -74,15 +82,19 @@ export const get = async (filters: Prisma.GroupWhereInput) => {
     return isOk;
   }
 
-  const group = await prisma.group.findUnique({
-    where: filters as any,
-  });
+  try {
+    const group = await prisma.group.findUnique({
+      where: filters as any,
+    });
 
-  if (!group) {
-    return genericActionErrors.notFound();
+    if (!group) {
+      return genericActionErrors.notFound();
+    }
+
+    return formatResponse<Group>(group);
+  } catch(e) {
+    return formatThrownErrorResponse(e);
   }
-
-  return formatResponse<Group>(group);
 }
 
 /**
@@ -104,15 +116,15 @@ export const create = async (group: Omit<Group, "id" | "createdAt" | "updatedAt"
 
   try {
     await validationSchema.validate(cleanGroup);
+
+    const newGroup = await prisma.group.create({
+      data: { ...cleanGroup }
+    });
+
+    return formatResponse<Group>(newGroup);
   } catch(e) {
-    return genericActionErrors.invalid("" + e);
+    return formatThrownErrorResponse(e);
   }
-
-  const newGroup = await prisma.group.create({
-    data: { ...cleanGroup }
-  });
-
-  return formatResponse<Group>(newGroup);
 }
 
 /**
@@ -134,16 +146,16 @@ export const edit = async (id: string, group: Omit<Group, "id" | "createdAt" | "
 
   try {
     await validationSchema.validate(cleanGroup);
+
+    const editGroup = await prisma.group.update({
+      where: { id },
+      data: { ...cleanGroup }
+    });
+
+    return formatResponse<Group>(editGroup);
   } catch(e) {
-    return genericActionErrors.invalid("" + e);
+    return formatThrownErrorResponse(e);
   }
-
-  const editGroup = await prisma.group.update({
-    where: { id },
-    data: { ...cleanGroup }
-  });
-
-  return formatResponse<Group>(editGroup);
 }
 
 /**
@@ -172,13 +184,18 @@ export const DO_NOT_IMPORT_canManageGroup = async (groupId: string, session: Ses
     return false;
   }
 
-  const count = await prisma.memberGroup.count({
-    where: { groupId: groupId, memberId: session.memberId }
-  });
+  try {
+    const count = await prisma.memberGroup.count({
+      where: { groupId: groupId, memberId: session.memberId }
+    });
 
-  if (!count) {
+    if (!count) {
+      return false;
+    }
+
+    return true;
+  } catch (e) {
+    console.log("DO_NOT_IMPORT_canManageGroup error", e);
     return false;
   }
-
-  return true;
 };

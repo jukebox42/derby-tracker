@@ -3,11 +3,11 @@ import { Avatar, Container, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useRouter } from "next/navigation";
 
-import { ConnectedForm, TextField } from "#/components";
 import { authActions } from "#/app/actions";
 import { authValidationSchema } from "#/lib/data/auth";
 import { routes } from "#/lib/routes";
 import { Card } from "#/ui/common";
+import { FormProvider, TextField } from "#/ui/form";
 
 export default function Login() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function Login() {
           position: "relative",
         }}
       >
-        <ConnectedForm
+        <FormProvider
           schema={authValidationSchema}
           onSubmit={data => authActions.login(data.email, data.password)}
           onSuccess={() => router.push(routes.MEMBERS.path)}
@@ -51,7 +51,7 @@ export default function Login() {
             autoComplete="current-password"
             name="password"
           />
-        </ConnectedForm>
+        </FormProvider>
       </Card>
     </Container>
   );

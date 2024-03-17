@@ -6,7 +6,7 @@ import { Member, Session } from "@prisma/client";
 import { getSession, createSession, deleteSession } from "#/lib/db/session";
 import prisma from "#/lib/prisma";
 import { CookieSession } from "./types";
-import { ActionErrorCodes, ActionResponseType, formatErrorResponse, formatResponse } from "./utils";
+import { ActionErrorCodes, ActionResponseType, formatErrorResponse, formatResponse, formatThrownErrorResponse } from "./utils";
 import { createCookie } from "#/lib/db/auth";
 import { SESSION_COOKIE_NAME } from "#/lib/db/utils";
 import { memberActions } from ".";
@@ -46,8 +46,8 @@ export const login = async (email: string, password: string) => {
     createCookie(cookieSession);
 
     return formatResponse<CookieSession>(cookieSession);
-  } catch (e) {
-    return formatErrorResponse(ActionErrorCodes.AUTH_FAIL_ERROR, "Server side error. " + e);
+  } catch(e) {
+    return formatThrownErrorResponse(e);
   }
 }
 
@@ -76,8 +76,8 @@ export const check = async () => {
     }
 
     return formatResponse<Session>(session);
-  } catch (e) {
-    return formatErrorResponse(ActionErrorCodes.SESSION_ERROR, "" + e);
+  } catch(e) {
+    return formatThrownErrorResponse(e);
   }
 }
 
@@ -89,7 +89,7 @@ export const check = async () => {
 export const get = async () => {
   const session = await check();
   if (session.type === ActionResponseType.ERROR) {
-    return invalidSession;
+    return session;
   }
   // We make sure they are active here. This prevents disabled users from staying authenticated.
   const member = await memberActions.get({ id: session.data.memberId, active: true });
@@ -120,11 +120,15 @@ export const logout = async () => {
     }
 
     await deleteSession(cookieData.id);
-  } catch {}
+  } catch(e) {
+    return formatThrownErrorResponse(e);
+  }
 
   try {
     cookies().delete(SESSION_COOKIE_NAME);
-  } catch {}
+  } catch(e) {
+    return formatThrownErrorResponse(e);
+  }
 
   return done;
 }

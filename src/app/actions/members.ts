@@ -4,7 +4,7 @@ import { Member, Permission, Prisma } from "@prisma/client";
 import prisma from "#/lib/prisma";
 import { validationSchema } from "#/lib/data/members";
 import { check as checkAccess } from "./access";
-import { ActionResponseType, formatResponse, genericActionErrors } from "./utils";
+import { ActionResponseType, formatThrownErrorResponse, formatResponse, genericActionErrors } from "./utils";
 
 /**
  * Protected Action
@@ -17,11 +17,18 @@ export const list = async (filters?: Prisma.MemberWhereInput) => {
     return isOk;
   }
 
-  const members = await prisma.member.findMany({
-    where: filters
-  });
+  try {
+    const members = await prisma.member.findMany({
+      where: filters,
+      include: {
+        contact: true,
+      }
+    });
 
-  return formatResponse<Member[]>(members);
+    return formatResponse<Member[]>(members);
+  } catch (e) {
+    return formatThrownErrorResponse(e);
+  }
 }
 
 /**
@@ -41,25 +48,29 @@ export const listByGroup = async (filters?: { groupId: string } & Omit<Prisma.Me
   if (isOk.type === ActionResponseType.ERROR) {
     return isOk;
   }
-  const { groupId, ...memberFilters } = filters;
+  try {
+    const { groupId, ...memberFilters } = filters;
 
-  const groupMember = await prisma.memberGroup.findMany({
-    where: { groupId }
-  });
+    const groupMember = await prisma.memberGroup.findMany({
+      where: { groupId }
+    });
 
-  if (!memberFilters) {
-    return genericActionErrors.notFound();
-  }
-  const members = await prisma.member.findMany({
-    where: { 
-      id: {
-        in: groupMember.map(m => m.memberId)
-      },
-      ...memberFilters,
+    if (!memberFilters) {
+      return genericActionErrors.notFound();
     }
-  });
+    const members = await prisma.member.findMany({
+      where: { 
+        id: {
+          in: groupMember.map(m => m.memberId)
+        },
+        ...memberFilters,
+      }
+    });
 
-  return formatResponse<Member[]>(members);
+    return formatResponse<Member[]>(members);
+  } catch (e) {
+    return formatThrownErrorResponse(e);
+  }
 }
 
 /**
@@ -74,15 +85,19 @@ export const get = async (filters: Prisma.MemberWhereInput) => {
     return isOk;
   }
 
-  const member = await prisma.member.findUnique({
-    where: filters as any,
-  });
+  try {
+    const member = await prisma.member.findUnique({
+      where: filters as any,
+    });
 
-  if (!member) {
-    return genericActionErrors.notFound();
+    if (!member) {
+      return genericActionErrors.notFound();
+    }
+
+    return formatResponse<Member>(member);
+  } catch (e) {
+    return formatThrownErrorResponse(e);
   }
-
-  return formatResponse<Member>(member);
 }
 
 /**
@@ -96,18 +111,17 @@ export const toggleActive = async (id: string, active = true) => {
     return isOk;
   }
 
-  const response = await prisma.member.update({
-    where: { id },
-    data: {
-      active,
-    }
-  });
-
-  if (response.active) {
-    return genericActionErrors.failed();
+  try {
+    const response = await prisma.member.update({
+      where: { id },
+      data: {
+        active,
+      }
+    });
+    return formatResponse(response.active);
+  } catch (e) {
+    return formatThrownErrorResponse(e);
   }
-
-  return formatResponse(true);
 }
 
 /**
@@ -121,18 +135,17 @@ export const toggleLoA = async (id: string, isOnLoa = true) => {
     return isOk;
   }
 
-  const member = await prisma.member.update({
-    where: { id },
-    data: {
-      isOnLoa,
-    }
-  });
-
-  if (member.active) {
-    return genericActionErrors.failed();
+  try {
+    const response = await prisma.member.update({
+      where: { id },
+      data: {
+        isOnLoa,
+      }
+    });
+    return formatResponse(response.isOnLoa);
+  } catch (e) {
+    return formatThrownErrorResponse(e);
   }
-
-  return formatResponse(true);
 }
 
 /**
@@ -158,14 +171,14 @@ export const create = async (member: Omit<Member, "id" | "createdAt" | "updatedA
 
   try {
     await validationSchema.validate(cleanMember);
+
+    const newMember = await prisma.member.create({
+      data: { ...cleanMember }
+    });
+
+    return formatResponse<Member>(newMember);
   } catch(e) {
-    return genericActionErrors.invalid("" + e);
+    return formatThrownErrorResponse(e);
   }
-
-  const newMember = await prisma.member.create({
-    data: { ...cleanMember }
-  });
-
-  return formatResponse<Member>(newMember);
 }
 

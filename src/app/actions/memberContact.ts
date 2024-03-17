@@ -5,7 +5,7 @@ import { MemberContact, Permission, Prisma } from "@prisma/client";
 import prisma from "#/lib/prisma";
 
 import { check as checkAccess } from "./access";
-import { ActionResponseType, formatResponse, genericActionErrors } from ".";
+import { ActionResponseType, formatResponse, formatThrownErrorResponse, genericActionErrors } from ".";
 
 /**
  * Protected Action
@@ -19,13 +19,17 @@ export const get = async (filters: Prisma.MemberContactWhereInput) => {
     return isOk;
   }
 
-  const memberContact = await prisma.memberContact.findUnique({
-    where: filters as any
-  });
+  try {
+    const memberContact = await prisma.memberContact.findUnique({
+      where: filters as any
+    });
 
-  if (!memberContact) {
-    return genericActionErrors.notFound();
+    if (!memberContact) {
+      return genericActionErrors.notFound();
+    }
+
+    return formatResponse<MemberContact>(memberContact);
+  } catch(e) {
+    return formatThrownErrorResponse(e);
   }
-
-  return formatResponse<MemberContact>(memberContact);
 }

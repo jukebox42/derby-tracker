@@ -1,8 +1,8 @@
 "use client"
 import React from "react";
-import { ChipProps, List, ListItem, ListSubheader, Stack } from "@mui/material";
+import { List, ListItem, ListSubheader, Stack } from "@mui/material";
 
-import { ProfileCard, TitleCard } from ".";
+import { TitleCard } from ".";
 
 export type PreviewCardProps = {
   title: string,
@@ -13,13 +13,7 @@ export type PreviewCardProps = {
   actions?: React.ReactNode | React.ReactNode[],
 }
 
-export type ProfilePreviewCardProps = {
-  avatarUrl?: string,
-  avatarCharacters?: string,
-  chips?: ({ label: string } & Pick<ChipProps, "color">)[],
-} & PreviewCardProps;
-
-const InternalPreviewCard = ({ lists, actions }: Omit<PreviewCardProps, "title">) => (
+export const InternalPreviewCard = ({ lists, actions }: Omit<PreviewCardProps, "title">) => (
   <>
     {lists.map(list => (
       <List key={list.title} subheader={<ListSubheader disableGutters>{list.title}</ListSubheader>} dense>
@@ -50,10 +44,4 @@ export const PreviewCard = ({ title, lists, actions }: PreviewCardProps) => (
   <TitleCard boxSx={{ gap: 0 }} title={title}>
     <InternalPreviewCard lists={lists} actions={actions} />
   </TitleCard>
-);
-
-export const ProfilePreviewCard = ({ title, lists, chips, avatarUrl, avatarCharacters, actions }: ProfilePreviewCardProps) => (
-  <ProfileCard boxSx={{ gap: 0 }} title={title} avatarUrl={avatarUrl} avatarCharacters={avatarCharacters} chips={chips}>
-    <InternalPreviewCard lists={lists} actions={actions} />
-  </ProfileCard>
 );

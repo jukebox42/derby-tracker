@@ -16,7 +16,7 @@ import { ActionResponseType, formatResponse, genericActionErrors } from "./utils
 export const check = async (permissions: Permission[], selfMemberId?: string) => {
   const session = await checkAuth();
   if (session.type === ActionResponseType.ERROR) {
-    return genericActionErrors.permissionDenied();
+    return session;
   }
 
   if (selfMemberId === session.data.memberId) {
@@ -35,7 +35,7 @@ export const check = async (permissions: Permission[], selfMemberId?: string) =>
 export const get = async () => {
   const session = await checkAuth();
   if (session.type === ActionResponseType.ERROR) {
-    return genericActionErrors.permissionDenied();
+    return session;
   }
 
   return formatResponse(session.data);

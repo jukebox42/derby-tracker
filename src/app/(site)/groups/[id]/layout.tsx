@@ -6,9 +6,8 @@ import { routes } from "#/lib/routes";
 import { tabsPaths } from "./paths";
 import { PageProvider } from "./context";
 import { redirect } from "next/navigation";
-import { Preview } from "./_ui/Preview";
+import { Preview } from "../_ui/Preview";
 import { DetailFrame } from "#/ui/templates";
-
 
 export default async function Layout({
   children,

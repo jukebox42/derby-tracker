@@ -1,14 +1,14 @@
 import { Avatar, Box, Chip, ChipProps, Paper, Stack, SxProps, Theme, Typography } from "@mui/material";
 import { TitleCardProps } from ".";
 
-export type ProfilePaneProps = {
+export type ProfileCardProps = {
   avatarUrl?: string,
   avatarCharacters?: string,
   chips?: ({ label: string } & Pick<ChipProps, "color">)[],
   boxSx?: SxProps<Theme>,
 } & TitleCardProps;
 
-export const ProfileCard = ({title, chips, avatarUrl, avatarCharacters, children, sx, elevation=3, boxSx}: ProfilePaneProps) => (
+export const ProfileCard = ({title, chips, avatarUrl, avatarCharacters, children, sx, elevation=3, boxSx}: ProfileCardProps) => (
   <Paper elevation={elevation} sx={{ p: 2, ...sx }}>
     <Stack spacing={2} direction={{ md: "column", xs: "row" }} alignItems="center" mb={2}>
       <Avatar

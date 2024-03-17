@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 
 import { Definition } from "./types";
-import { renderValue } from "#/components";
+import { renderValue } from "#/ui/data";
 import { routes } from "../routes";
 
 export const permissions: {[key: string]: string} = {
@@ -39,13 +39,15 @@ export const permissions: {[key: string]: string} = {
   GAME_ROSTER_MANAGE: "Game roster manage",
 }
 
+export const groupDetailPath = (id: string | number) => `${routes.GROUPS.path}/${id}`;
+
 export const groupDefinition: Definition = {
   name: {
     key: "name",
     label: "Name",
     type: "string",
-    render: params => renderValue.link(params.name, `${routes.GROUPS.path}/${params.id}`, false),
-    renderCell: params => renderValue.link(params.value, `${routes.GROUPS.path}/${params.id}`, false),
+    render: params => renderValue.link(params.name, groupDetailPath(params.id), false),
+    renderCell: params => renderValue.link(params.value, groupDetailPath(params.id), false),
     validation: () => Yup.string().required("Group name required."),
   },
   description: {

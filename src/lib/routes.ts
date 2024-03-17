@@ -36,6 +36,11 @@ export const routes: Routes = {
     path: "/announcements",
     permissions: [Permission.ANNOUNCEMENTS_READ, Permission.ANNOUNCEMENTS_MANAGE],
   },
+  ANNOUNCEMENTS_CREATE: {
+    label: "Create Announcement",
+    path: "/announcements/create",
+    permissions: [Permission.ANNOUNCEMENTS_MANAGE],
+  },
   ATTENDANCE: {
     label: "Attendance",
     path: "/attendance",
@@ -105,6 +110,7 @@ export const routes: Routes = {
 };
 
 export const navigationRoutes: Route[] = [
+  routes.ANNOUNCEMENTS,
   routes.ATTENDANCE,
   routes.EVENTS,
   routes.MEMBERS,

@@ -2,7 +2,7 @@
 import { Stack } from "@mui/material";
 
 import { memberDefinition as md } from "#/lib/data/members";
-import { Pane, TitlePane } from "#/components";
+import { Card, TitleCard } from "#/ui/common";
 
 import { usePage } from "../context";
 
@@ -11,12 +11,12 @@ export default function Page() {
 
   return (
     <Stack spacing={3}>
-      <TitlePane title="Bio">
+      <TitleCard title="Bio">
         {md.about.render(member)}
-      </TitlePane>
-      <Pane>
+      </TitleCard>
+      <Card>
         <pre>{JSON.stringify(member, null, 2)}</pre>
-      </Pane>
+      </Card>
     </Stack>
   );
 }

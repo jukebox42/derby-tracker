@@ -1,24 +1,41 @@
 "use client"
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { cookies } from "next/headers";
 
-import { authActions } from "../actions";
+import { authActions } from "#/app/actions";
 import { routes } from "#/lib/routes";
-import { SESSION_COOKIE_NAME } from "#/lib/db/utils";
+import { Box, Container, Typography } from "@mui/material";
 
 export default function Login() {
   const router = useRouter();
 
+  const logout = async () => {
+    await authActions.logout();
+    router.push(routes.LOGIN.path)
+  }
+
   useEffect(() => {
-    cookies().delete(SESSION_COOKIE_NAME);
-    authActions.logout().then(() => router.push(routes.LOGIN.path));
+    logout();
   }, []);
 
   return (
-    <>
-      <p>We hate to see you go, but we love to watch you skate away.</p>
-      <p>(This is a butt joke)</p>
-    </>
+    <Container component="main" maxWidth="sm" sx={{ height: "100vh" }}>
+      <Box
+        sx={{
+          gap: 0,
+          textAlign: "center",
+          top: "50%",
+          transform: "translateY(-50%)",
+          position: "relative",
+        }}
+      >
+        <Typography variant="h2" sx={{ fontFamily: "Caveat", fontWeight: 400, fontStyle: "normal" }}>
+          We hate to see you go, but we love to watch you skate away.
+        </Typography>
+        <Typography variant="h4" sx={{ fontFamily: "Caveat", fontWeight: 400, fontStyle: "normal" }}>
+          (This is a butt joke)
+        </Typography>
+      </Box>
+    </Container>
   );
 }

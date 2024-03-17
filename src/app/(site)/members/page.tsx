@@ -2,12 +2,12 @@
 import { Permission } from "@prisma/client";
 
 import { useSite } from "#/context";
-import { routes } from "#/lib/routes";
 import { hasPermission, memberActions } from "#/app/actions";
 import { levels, memberDefinition, positions } from "#/lib/data/members";
+import { Card } from "#/ui/common";
+import { DataDisplay, FilterControls } from "#/ui/data";
 
-import { Pane, ConnectedTable, ConnectedFilterControls } from "#/components";
-import { PermissionButton } from "#/ui/smart";
+import { CreateModal } from "./_ui/CreateModal";
 
 export default function Page() {
   // TODO: do permissions check and redirect somewhere.
@@ -15,7 +15,8 @@ export default function Page() {
   const canManage = hasPermission([Permission.MEMBER_MANAGE], session);
 
   const columns = ["alias", "number", "name", "level", "isOnLoa", "preferredPosition"];
-  const filterControls: ConnectedFilterControls[] = [
+  const listColumns = ["number", "level", "preferredPosition"];
+  const filterControls: FilterControls[] = [
     {
       label: "Level",
       name: "level",
@@ -32,6 +33,7 @@ export default function Page() {
       label: "LoA",
       name: "isOnLoa",
       type: "boolean",
+      defaultValue: false,
     },
   ];
 
@@ -48,25 +50,21 @@ export default function Page() {
 
   return (
     <>
-      <Pane>
-        <ConnectedTable
+      <Card>
+        <DataDisplay
           api={memberActions.list}
-          defaultFilters={{ active: true }}
+          defaultFilters={{ active: true, isOnLoa: false }}
           searchFields={["name", "alias", "number"]}
           filterControls={filterControls}
-          actions={
-            <PermissionButton
-              permissions={[Permission.MEMBER_MANAGE]}
-              purpose="create"
-              path={routes.MEMBERS_CREATE.path}
-            >
-              Add Member
-            </PermissionButton>
-          }
+          actions={refresh => (
+            <CreateModal refresh={refresh} />
+          )}
           columnKeys={columns}
+          titleColumnKey="alias"
+          listColumnKeys={listColumns}
           definition={memberDefinition}
         />
-      </Pane>
+      </Card>
     </>
   );
 }

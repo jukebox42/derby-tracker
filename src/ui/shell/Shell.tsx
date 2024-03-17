@@ -5,10 +5,10 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 import { Member, Session } from "@prisma/client";
 
-import { Header } from "#/components";
 import theme from "#/theme"
 import { Profile } from "./Profile";
 import { Navigation } from "./Navigation";
+import { Header } from "./Header";
 
 export const Shell = ({ member, session }: { member: Member, session: Session }) => {
   const matches = useMediaQuery(theme.breakpoints.up("md"));

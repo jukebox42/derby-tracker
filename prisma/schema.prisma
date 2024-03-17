@@ -98,6 +98,7 @@ model Member {
   password           Password?
   session            Session?
   groups             MemberGroup[]
+  announcements      Announcement[]
 }
 
 model MemberContact {
@@ -149,6 +150,7 @@ model MemberGroup {
 model Password {
   @@map(name: "member_passwords")
   password   String
+  // resetCode  String?
   updatedAt  DateTime   @updatedAt @map("updated_at")
 
   member     Member?    @relation(fields: [memberId], references: [id])
@@ -226,4 +228,17 @@ model Roster {
   eventId    String    @unique @db.VarChar(30) @map(name: "event_id")
   charter    Charter   @relation(fields: [charterId], references: [id])
   charterId  String    @db.VarChar(30) @map(name: "charter_id")
+}
+
+model Announcement {
+  @@map(name: "announcements")
+  id           String    @default(cuid()) @id @db.VarChar(30)
+  title        String    @db.VarChar(100)
+  description  String    @db.VarChar(500)
+
+  createdAt    DateTime  @default(now()) @map(name: "created_at")
+  updatedAt    DateTime  @updatedAt @map(name: "updated_at")
+
+  author       Member    @relation(fields: [authorId], references: [id])
+  authorId     String    @db.VarChar(30) @map(name: "author_id")
 }

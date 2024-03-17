@@ -1,4 +1,5 @@
-import { Permission, Session } from "@prisma/client";
+import { Permission, Prisma, Session } from "@prisma/client";
+import { ValidationError } from "yup";
 
 /**
  * An enum of error response codes
@@ -15,6 +16,7 @@ export enum ActionErrorCodes {
   NOT_FOUND,
   FAILED,
   INVALID,
+  VALIDATION,
 }
 
 export enum ActionResponseType {
@@ -66,6 +68,34 @@ export const formatErrorResponse = (id: ActionErrorCodes, message: string): Acti
   }
 };
 
+// https://www.prisma.io/docs/orm/reference/error-reference#error-codes
+export const formatThrownErrorResponse = (e: any) => {
+  console.log("API Error", e);
+  // Yup
+  if (e instanceof ValidationError) {
+    return genericActionErrors.invalid(`Validation error: ${e.errors.join(", ")}`);
+  }
+  // Prisma
+  if (e instanceof Prisma.PrismaClientKnownRequestError) {
+    switch (e.code) {
+      case "P2002":
+        // handling duplicate key errors
+        return genericActionErrors.invalid(`Duplicate field value: ${e.meta?.target}`);
+      case "P2014":
+        // handling invalid id errors
+        return genericActionErrors.invalid(`Invalid ID: ${e.meta?.target}`);
+      case "P2003":
+        // handling invalid data errors
+        return genericActionErrors.invalid(`Invalid input data: ${e.meta?.target}`);
+      default:
+        // handling all other errors
+        return genericActionErrors.failed(`Something went wrong: ${e.message}`);
+    }
+  }
+  // failsafe
+  return genericActionErrors.failed(`Something went wrong: ${e.message}`);
+}
+
 type GenericActionErrors = Record<string, (message?: string) => ActionResponseError>;
 
 /**
@@ -76,7 +106,8 @@ export const genericActionErrors: GenericActionErrors = {
     formatErrorResponse(ActionErrorCodes.PERMISSION_DENIED, message ?? "Permission denied."),
   notFound: (message) => formatErrorResponse(ActionErrorCodes.NOT_FOUND, message ?? "Item not found."),
   failed: (message) => formatErrorResponse(ActionErrorCodes.FAILED, message ?? "Action failed."),
-  invalid: (message) => formatErrorResponse(ActionErrorCodes.FAILED, message ?? "Invalid request."),
+  invalid: (message) => formatErrorResponse(ActionErrorCodes.INVALID, message ?? "Invalid request."),
+  validation: (message) => formatErrorResponse(ActionErrorCodes.VALIDATION, message ?? "Validation failed."),
 }
 
 /**

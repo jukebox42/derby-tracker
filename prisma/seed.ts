@@ -23,21 +23,27 @@ async function main() {
     }
   });
   await prisma.member.upsert({
-    where: { email: "bcandeger@gamil.com"},
+    where: { email: "b@g.com"},
     update: {},
     create: {
-      name: "Brittany Norton",
-      email: "bcandeger@gamil.com",
+      name: "Brittany N",
+      email: "b@g.com",
       alias: "Link to the Fast",
       level: "GAME",
       preferredPosition: "JAMMER",
       number: "46",
       pronouns: "she/her",
-      slackUsername: "brit",
 
       password: {
         create: {
           password: bcrypt.hashSync("brit", 10)
+        }
+      },
+
+      social: {
+        create: {
+          slack: "brit",
+          facebook: "brit",
         }
       }
     }

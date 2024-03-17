@@ -87,13 +87,12 @@ model Member {
   preferredPosition  Position?  @map(name: "preferred_position")
   active             Boolean    @default(true)
   about              String?    @db.VarChar(500)
-  slackUsername      String?    @db.VarChar(100)
-  facebookLink       String?    @db.VarChar(250)
   createdAt          DateTime   @default(now()) @map(name: "created_at")
   updatedAt          DateTime   @updatedAt @map(name: "updated_at")
 
   contact            MemberContact?
   social             MemberSocial?
+
   charters           Charter[]
   password           Password?
   session            Session?

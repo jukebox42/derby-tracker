@@ -3,8 +3,8 @@ import { Member, Permission, Prisma } from "@prisma/client";
 
 import prisma from "#/lib/prisma";
 import { validationSchema } from "#/lib/data/members";
-import { check as checkAccess } from "./access";
-import { ActionResponseType, formatThrownErrorResponse, formatResponse, genericActionErrors } from "./utils";
+import { check as checkAccess, get as getAccess } from "./access";
+import { ActionResponseType, formatThrownErrorResponse, formatResponse, genericActionErrors, hasPermission } from "./utils";
 
 /**
  * Protected Action
@@ -20,9 +20,6 @@ export const list = async (filters?: Prisma.MemberWhereInput) => {
   try {
     const members = await prisma.member.findMany({
       where: filters,
-      include: {
-        contact: true,
-      }
     });
 
     return formatResponse<Member[]>(members);
@@ -85,9 +82,18 @@ export const get = async (filters: Prisma.MemberWhereInput) => {
     return isOk;
   }
 
+  const access = await getAccess();
+  if (access.type === ActionResponseType.ERROR) {
+    return access;
+  }
+
   try {
     const member = await prisma.member.findUnique({
       where: filters as any,
+      include: {
+       contact: hasPermission([Permission.MEMBER_MANAGE], access.data),
+       social: true,
+      }
     });
 
     if (!member) {

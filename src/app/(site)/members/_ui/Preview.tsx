@@ -61,8 +61,9 @@ return (
       { title: "Social", items: socialList },
       ...(hasAccess ? [{ title: "Admin", items: adminList }]: [])
     ]}
-    actions={[
-      <Button variant="contained" color="secondary">Edit</Button>,
+    actions={
+      <>
+      <Button variant="contained" color="secondary">Edit</Button>
       <PromptButton
         promptMessage={
           member.isOnLoa ?
@@ -74,7 +75,7 @@ return (
         onClick={handleLoa}
       >
         {member.isOnLoa ? "End LoA" : "Start LoA"}
-      </PromptButton>,
+      </PromptButton>
       <PromptButton
         promptMessage={
           member.active ?
@@ -86,8 +87,9 @@ return (
         onClick={handleActivate}
       >
         {member.active ? "Deactivate" : "Reactivate"}
-      </PromptButton>,
-    ]}
+      </PromptButton>
+      </>
+    }
   />
   );
 }

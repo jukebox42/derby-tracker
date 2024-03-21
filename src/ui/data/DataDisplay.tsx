@@ -1,7 +1,7 @@
 "use client"
 import React from "react";
 import { AvatarProps, Box } from "@mui/material";
-import { GridActionsCellItem, GridDeleteIcon, GridValidRowModel } from "@mui/x-data-grid";
+import { GridValidRowModel } from "@mui/x-data-grid";
 
 import { Definition } from "#/lib/data/types";
 import { formatColumn, formatListItem } from "#/lib/data/utils";

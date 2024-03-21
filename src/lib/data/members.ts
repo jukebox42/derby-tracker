@@ -24,7 +24,7 @@ export const levels: {[key: string]: string} = {
 export const memberDefinition: Definition = {
   alias: {
     key: "alias",
-    label: "Name",
+    label: "Derby Name",
     type: "link",
     render: params => renderValue.link(params.alias, `${routes.MEMBERS.path}/${params.id}`),
     renderCell: params => renderValue.link(params.value, `${routes.MEMBERS.path}/${params.id}`),
@@ -32,7 +32,7 @@ export const memberDefinition: Definition = {
   },
   name: {
     key: "name",
-    label: "Real Name",
+    label: "Government Name",
     type: "string",
     render: params => renderValue.string(params.name),
     validation: () => Yup.string().required("Real name is required."),

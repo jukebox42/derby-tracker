@@ -16,7 +16,7 @@ export const announcementDefinition: Definition = {
     key: "description",
     label: "Description",
     type: "string",
-    render: params => renderValue.string(params.description),
+    render: params => renderValue.rte(params.description),
     renderCell: params => renderValue.string(params.value),
     validation: () => Yup.string().required("Announcement description is required."),
   },

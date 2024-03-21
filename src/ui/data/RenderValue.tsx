@@ -2,6 +2,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { Link } from "#/ui/common";
+import { RteContent } from "../common/RteContent";
 
 export const NULL_VALUE = "-";
 
@@ -49,6 +50,7 @@ export const renderValue = {
     value ? map ? map[value] : value : NULL_VALUE,
   array: (value: string[], map?: { [key: string]: string }) =>
     value ? value.map(v => map ? (map[v] ? map[v] : v) : value) : NULL_VALUE,
+  rte: (value: string) => value ? <RteContent html={value} /> : NULL_VALUE,
 }
 
 export const RenderValue = ({ value, type, pre, post, href, newWindow, map, useIcons }: ConnectedValueProps) => {
@@ -64,6 +66,7 @@ export const RenderValue = ({ value, type, pre, post, href, newWindow, map, useI
     boolean: () => renderValue.boolean(value, useIcons),
     enum: () => !map ? NULL_VALUE : renderValue.enum(value, map),
     array: () => renderValue.array(value, map),
+    rte: () => renderValue.rte(value),
   }
 
   return render[type]() ?? NULL_VALUE;

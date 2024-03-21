@@ -6,3 +6,4 @@ export * from "./DatePicker";
 export * from "./Checkbox";
 export * from "./ErrorText";
 export * from "./FormProvider";
+export * from "./Rte";

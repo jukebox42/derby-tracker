@@ -12,11 +12,12 @@ import { Permission } from "@prisma/client";
 
 import { useSite } from "#/context";
 
-type Purpose = "create" | "edit" | "remove" | "removeMember";
+type Purpose = "create" | "edit" | "remove" | "removeMember" | "delete";
 
 export type PermissionButtonProps = {
   path?: string,
   permissions?: Permission[],
+  memberId?: string,
   purpose?: Purpose,
   isIconButton?: boolean,
 } & Omit<ButtonProps, "href">;
@@ -38,6 +39,7 @@ const getCustomIcon = (purpose?: Purpose, startIcon?: React.ReactNode) => {
 export const PermissionButton = ({
   path,
   permissions,
+  memberId,
   disabled,
   variant = "contained",
   color = "primary",
@@ -48,8 +50,10 @@ export const PermissionButton = ({
   isIconButton,
   ...buttonProps
 }: PermissionButtonProps) => {
-  const { hasAccess } = useSite(permissions);
+  const { hasAccess, session } = useSite(permissions);
   const router = useRouter();
+
+  const canDo = hasAccess || session.memberId === memberId;
 
   const customStartIcon = getCustomIcon(purpose, startIcon);
 
@@ -63,7 +67,7 @@ export const PermissionButton = ({
       <IconButton
         component="button"
         {...buttonProps}
-        disabled={disabled || !hasAccess}
+        disabled={disabled || !canDo}
         variant={variant}
         color={color}
         onClick={handleClick}
@@ -77,7 +81,7 @@ export const PermissionButton = ({
     <Button
       {...buttonProps}
       startIcon={customStartIcon}
-      disabled={disabled || !hasAccess}
+      disabled={disabled || !canDo}
       variant={variant}
       color={color}
       onClick={handleClick}

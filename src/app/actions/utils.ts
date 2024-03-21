@@ -1,4 +1,5 @@
 import { Permission, Prisma, Session } from "@prisma/client";
+import sanitize from "sanitize-html";
 import { ValidationError } from "yup";
 
 /**
@@ -117,3 +118,32 @@ export const genericActionErrors: GenericActionErrors = {
  */
 export const hasPermission = (permissions: Permission[], session?: Session) => 
   !!permissions.find(p => session?.permissions.includes(p));
+
+
+/**
+ * Sanitize html content server side and client side
+ */
+export const sanitizeHtml = (html: string) => {
+  return sanitize(html, {
+    allowedTags: [
+      "b", "i", "u", "em", "strong", "span", "p",
+      "ol", "ul", "li", "img", "a",
+      "h1", "h2", "h3", "h4", "h5", "h6", 
+    ],
+    nonBooleanAttributes: [
+      "color", "href", "style", "href", "name", "width", "height", "rel", "target",
+    ],
+    allowedAttributes: {
+      "*": ["color", "style", "name", "width", "height", "rel"],
+      a: [ "href", "name", "target", "rel" ],
+      img: [ 'src', 'alt', 'title', 'width', 'height' ]
+    },
+    selfClosing: [ "img" ],
+    allowedSchemes: [ 'http', 'https', "tel", "mailto" ],
+    allowedSchemesAppliedToAttributes: [ 'href', 'src', 'cite' ],
+    allowProtocolRelative: true,
+    enforceHtmlBoundary: false,
+    parseStyleAttributes: true,
+    disallowedTagsMode: "discard",
+  })
+}

@@ -5,6 +5,7 @@ import { validationSchema } from "#/lib/data/announcement";
 
 import { PermissionButton } from "#/ui/smart";
 import { FormProvider, TextField } from "#/ui/form";
+import { Rte } from "#/ui/form/Rte";
 
 type CreateData = Omit<Announcement, "id" | "authorId" | "createdAt" | "updatedAt">;
 
@@ -32,9 +33,6 @@ export const CreateModal = ({ refresh }: { refresh: () => void }) => (
       autoFocus
     />
 
-    <TextField
-      label="Description"
-      name="description"
-    />
+    <Rte label="Description" name="description" required />
   </FormProvider>
 );

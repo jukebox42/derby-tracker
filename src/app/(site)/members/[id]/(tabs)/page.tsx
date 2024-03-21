@@ -5,6 +5,7 @@ import { memberDefinition as md } from "#/lib/data/members";
 import { Card, TitleCard } from "#/ui/common";
 
 import { usePage } from "../context";
+import { ChangePasswordModal } from "../../_ui/ChangePasswordModal";
 
 export default function Page() {
   const { member } = usePage();
@@ -15,6 +16,8 @@ export default function Page() {
         {md.about.render(member)}
       </TitleCard>
       <Card>
+        TODO: find a better place for this.
+        <ChangePasswordModal />,
         <pre>{JSON.stringify(member, null, 2)}</pre>
       </Card>
     </Stack>

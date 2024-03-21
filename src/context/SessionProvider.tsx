@@ -44,7 +44,7 @@ export const useSite = (permissions?: Permission[], failPath?: string, memberId?
   const router = useRouter();
   const hasAccess = !!permissions?.length ?
     hasPermission(permissions, context.session) || context.session.memberId === memberId :
-    true;
+    false;
 
   (!hasAccess && failPath) && router.push(failPath);
 

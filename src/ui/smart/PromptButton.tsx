@@ -57,8 +57,8 @@ export const PromptButton = ({
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{promptTitle}</DialogTitle>
         <DialogContent>
-        {promptMessage && <DialogContentText>{promptMessage}</DialogContentText>}
-        <ErrorText text={error} />
+          {promptMessage && <DialogContentText>{promptMessage}</DialogContentText>}
+          <ErrorText text={error} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>{declineText}</Button>

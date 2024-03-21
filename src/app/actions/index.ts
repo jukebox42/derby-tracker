@@ -6,6 +6,7 @@ export * as groupActions from "./groups";
 export * as memberActions from "./members";
 export * as memberContactActions from "./memberContact";
 export * as memberGroupActions from "./memberGroup";
+export * as passwordActions from "./password";
 
 export * from "./utils";
 export * from "./types";

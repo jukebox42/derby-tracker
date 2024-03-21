@@ -1,5 +1,5 @@
 "use client"
-import { TextField as Wrapped, TextFieldProps, } from "@mui/material";
+import { TextField as Wrapped, TextFieldProps, Skeleton, } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { useField } from ".";
 
@@ -7,11 +7,16 @@ type Props = {
   name: string,
   label: string,
   defaultValue?: string | null,
+  isLoading?: boolean,
 } & Omit<TextFieldProps, "label" | "name" | "defaultValue" | "onChange" | "helperText" | "error">
 
 export const TextField = (props: Props) => {
-  const { name, label, defaultValue = "", children, disabled, ...rest} = props;
-  const { control, isSubmitting } = useField();
+  const { name, label, defaultValue = "", children, disabled, isLoading, ...rest} = props;
+  const { control, isSubmitting, isLoading: formIsLoading } = useField();
+
+  if (formIsLoading || isLoading) {
+    return <Skeleton variant="rounded" sx={{height: "54px", mt: 1, mb: 2 }} />
+  }
 
   return (
     <Controller

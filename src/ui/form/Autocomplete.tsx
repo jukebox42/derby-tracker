@@ -1,5 +1,5 @@
 "use client"
-import { Autocomplete as Wrapped, TextField, Chip } from "@mui/material";
+import { Autocomplete as Wrapped, TextField, Chip, Skeleton } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { useField } from ".";
 
@@ -11,11 +11,16 @@ type Props = {
   defaultValue?: string[],
   getOptionLabel?: (option: string) => string,
   disabled?: boolean,
+  isLoading?: boolean,
 };
 
 export const Autocomplete = (props: Props) => {
-  const { label, name, required, defaultValue = [], options, getOptionLabel, disabled } = props;
-  const { control, isSubmitting } = useField();
+  const { label, name, required, defaultValue = [], options, getOptionLabel, disabled, isLoading } = props;
+  const { control, isSubmitting, isLoading: formIsLoading } = useField();
+
+  if (formIsLoading || isLoading) {
+    return <Skeleton variant="rounded" sx={{height: "54px", mt: 1, mb: 2 }} />
+  }
 
   return (
     <Controller

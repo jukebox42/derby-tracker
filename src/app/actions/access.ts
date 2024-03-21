@@ -1,7 +1,7 @@
 "use server"
 import { Permission } from "@prisma/client";
 import { check as checkAuth } from "./auth";
-import { ActionResponseType, formatResponse, genericActionErrors } from "./utils";
+import { ActionResponseType, formatResponse } from "./utils";
 
 /**
  * Unprotected Action

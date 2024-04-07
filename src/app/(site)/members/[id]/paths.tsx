@@ -22,6 +22,11 @@ export const paths: Routes = {
     path: "/contact",
     permissions: [Permission.MEMBER_MANAGE],
   },
+  SETTINGS: {
+    label: "SETTINGS",
+    path: "/settings",
+    permissions: [], // TODO: only show if self
+  }
 }
 
 export const tabsPaths: Route[] = [

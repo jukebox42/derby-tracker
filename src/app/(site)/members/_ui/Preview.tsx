@@ -6,29 +6,13 @@ import { ProfilePreviewCard } from "#/ui/common";
 import { memberDefinition as md } from "#/lib/data/members";
 import { memberSocialDefinition as msd } from "#/lib/data/memberSocial";
 import { useSite } from "#/context";
-import { PromptButton } from "#/ui/smart";
-import { ActionResponseType, memberActions } from "#/app/actions";
 
 import { usePage } from "../[id]/context";
+import { ChangePasswordModal } from "./ChangePasswordModal";
 
 export const Preview = () => {
   const { hasAccess } = useSite([Permission.MEMBER_READ, Permission.MEMBER_MANAGE]);
-  const { member, setMember } = usePage();
-
-  const handleLoa = async () => {
-    const result = await memberActions.toggleLoA(member.id, !member.isOnLoa);
-    if (result.type === ActionResponseType.ERROR) {
-      throw new Error(result.error.message);
-    }
-    setMember({ ...member, isOnLoa: result.data });
-  }
-  const handleActivate = async () => {
-    const result = await memberActions.toggleActive(member.id, !member.active);
-    if (result.type === ActionResponseType.ERROR) {
-      throw new Error(result.error.message);
-    }
-    setMember({ ...member, active: !member.active });
-  }
+  const { member } = usePage();
 
   const aboutList = [
     { label: md.name.label, value: member.name },
@@ -63,31 +47,8 @@ return (
     ]}
     actions={
       <>
-      <Button variant="contained" color="secondary">Edit</Button>
-      <PromptButton
-        promptMessage={
-          member.isOnLoa ?
-          "You are about to take this player off a Leave of Absence." :
-          "You are about to put this player on a Leave of Absence."
-        }
-        color="warning"
-        permissions={[Permission.MEMBER_MANAGE]}
-        onClick={handleLoa}
-      >
-        {member.isOnLoa ? "End LoA" : "Start LoA"}
-      </PromptButton>
-      <PromptButton
-        promptMessage={
-          member.active ?
-          "You are about to deactivate this member. They will not be able to log in while deactivated." :
-          "You are about to reactivate this member. This will restore their ability to login."
-        }
-        color={member.active ? "error" : "success"}
-        permissions={[Permission.MEMBER_MANAGE]}
-        onClick={handleActivate}
-      >
-        {member.active ? "Deactivate" : "Reactivate"}
-      </PromptButton>
+        <Button variant="contained" color="secondary">Edit</Button>
+        <ChangePasswordModal />
       </>
     }
   />

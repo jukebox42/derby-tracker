@@ -3,18 +3,19 @@ import { Permission } from "@prisma/client";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 
 import { ActionResponseType, groupActions, hasPermission, memberGroupActions } from "#/app/actions";
-import { useStore } from "#/hooks/useStore";
 import { Card } from "#/ui/common";
 import { groupDefinition } from "#/lib/data/group";
 import { DataDisplay } from "#/ui/data";
 import { PromptButton } from "#/ui/smart";
+import { useSite } from "#/context";
 
 import { usePage } from "../../context";
 import { AddGroupModal } from "../../../_ui/AddGroupModal";
 
+
 export default function Page({ params: { id } }: { params: { id: string }}) {
   const { member } = usePage();
-  const session = useStore(state => state.session);
+  const { session } = useSite();
   const canManage = hasPermission([Permission.GROUP_MANAGE], session);
 
   const columns = ["name", "description"];

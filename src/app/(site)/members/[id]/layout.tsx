@@ -6,7 +6,7 @@ import { ActionResponseType, memberActions } from "#/app/actions";
 import { routes } from "#/lib/routes";
 import { DetailFrame } from "#/ui/templates";
 
-import { tabsPaths } from "./paths";
+import { paths, tabsPaths } from "./paths";
 import { PageProvider } from "./context";
 import { Preview } from "../_ui/Preview";
 
@@ -29,7 +29,9 @@ export default async function Layout({
       <DetailFrame
         card={<Preview />}
         basePath={`${routes.MEMBERS.path}/${id}`}
-        tabPaths={tabsPaths} 
+        tabPaths={tabsPaths}
+        settingsTab={paths.SETTINGS}
+        memberId={id}
       >
         {children}
       </DetailFrame>

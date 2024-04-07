@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import { Paper, SxProps, Theme } from "@mui/material";
 
 export type CardProps = {
-  children: ReactNode | ReactNode[],
+  children?: ReactNode | ReactNode[],
   elevation?: number,
   sx?: SxProps<Theme>,
 }

@@ -1,5 +1,5 @@
 "use client"
-import { Stack } from "@mui/material"
+import { Box, Stack } from "@mui/material"
 
 import { useSite } from "#/context";
 import { useTab } from "#/hooks/useTab";
@@ -10,13 +10,17 @@ import { TabButton } from "../internal/TabButton";
 export type TabButtonGroupProps = {
   basePath: string,
   paths: Route[],
+  settingsTab?: Route,
+  memberId?: string,
 }
 
-export const TabButtonGroup = ({ paths, basePath }: TabButtonGroupProps) => {
+export const TabButtonGroup = ({ paths, basePath, settingsTab, memberId }: TabButtonGroupProps) => {
   const { session } = useSite();
   const [tab, setTab] = useTab(basePath);
 
   const filtered = filterRoutes(session.permissions, paths);
+
+  const memberCheck = !memberId ? true : session.memberId === memberId;
 
   return (
     <Stack spacing={1} direction="row">
@@ -25,6 +29,12 @@ export const TabButtonGroup = ({ paths, basePath }: TabButtonGroupProps) => {
           {t.label}
         </TabButton>
       ))}
+      <Box sx={{ display: "flex", flexGrow: 1 }} />
+      {(settingsTab && memberCheck) && (
+        <TabButton key={settingsTab.label} tabKey={settingsTab.path} activeKey={tab} onClick={() => setTab(settingsTab.path)}>
+          {settingsTab.label}
+        </TabButton>
+      )}
     </Stack>
   );
 }

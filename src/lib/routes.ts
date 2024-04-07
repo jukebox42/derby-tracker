@@ -3,7 +3,7 @@ import { Permission } from "@prisma/client";
 export type Route = {
   label: string,
   path: string,
-  permissions: Permission[]
+  permissions: Permission[],
 }
 
 export type Routes = Record<string, Route>;

@@ -1,55 +1,52 @@
 "use client"
 import React from "react";
 import { AvatarProps, Box } from "@mui/material";
-import { GridValidRowModel } from "@mui/x-data-grid";
 
 import { Definition } from "#/lib/data/types";
-import { formatColumn, formatListItem } from "#/lib/data/utils";
 
 import { UseConnectedListProps, useConnectedList } from "#/hooks/useConnectedList";
-import { DataTable } from "./table/DataTable";
 import { DataFilterProps, DataFilters } from "./filters/DataFilters";
 import { useBreakpoints } from "#/hooks/useBreakpoint";
-import { DataList } from "./list/DataList";
 import { DataSearch, DataSearchProps } from "./filters/DataSearch";
-import { GenericDataDisplay } from "./types";
+import { DataDisplayRow, GenericDataDisplay } from "./types";
+import { SmartDataTable } from "./table/SmartDataTable";
+import { SmartDataList } from "./list/SmartDataList";
 
 // TODO: Rebuild this better
 
-type BaseDataDisplayProps<R extends GridValidRowModel,F> = {
+type BaseDataDisplayProps<R extends DataDisplayRow,F> = {
   definition: Definition,
   onSearch?: (search: string) => void,
   variant?: "auto" | "table" | "list",
 } &
   UseConnectedListProps<R, F> &
-  Pick<GenericDataDisplay<GridValidRowModel>, "rowAction"> &
+  Pick<GenericDataDisplay<R>, "rowAction"> &
   Pick<DataSearchProps, "actions"> &
   Pick<DataFilterProps<F>, "additionalFilterControls" | "filterControls">;
 
-export type DataDisplayTableProps<R extends GridValidRowModel,F> = {
+export type DataDisplayTableProps<R extends DataDisplayRow,F> = {
   columnKeys: string[],
 } & BaseDataDisplayProps<R,F>;
 
-export type DataDisplayListProps<R extends GridValidRowModel,F> = {
+export type DataDisplayListProps<R extends DataDisplayRow,F> = {
   /**
    * The key of the column to use for a title. If listOnClick is NOT provided then we will render()
    * this field to it returns a link. otherwise we will use this string raw.
    */
-  titleColumnKey: string,
+  listTitleKey: string,
+  listDescriptionKey?: string,
   listColumnKeys: string[],
   listAvatarProps?: (row: R) => AvatarProps,
   listOnClick?: (row: R) => void,
-  listDescriptionKey?: string,
 } & BaseDataDisplayProps<R,F>;
 
-export type DataDisplayProps<R extends GridValidRowModel,F> = {
+export type DataDisplayProps<R extends DataDisplayRow,F> = {
   variant?: "auto" | "table" | "list",
 } &
   DataDisplayListProps<R,F> &
   DataDisplayTableProps<R,F>;
-  
 
-export const DataDisplay = <R extends GridValidRowModel,F>(
+export const DataDisplay = <R extends DataDisplayRow,F>(
   {
     variant,
     api,
@@ -58,7 +55,7 @@ export const DataDisplay = <R extends GridValidRowModel,F>(
     searchFields,
     actions,
     rowAction,
-    titleColumnKey,
+    listTitleKey,
     columnKeys,
     listAvatarProps,
     listColumnKeys,
@@ -79,17 +76,6 @@ export const DataDisplay = <R extends GridValidRowModel,F>(
     refresh,
   } = useConnectedList({ api, defaultFilters, defaultSearch, searchFields });
   const { md } =  useBreakpoints();
-  const columns = columnKeys.map(key => formatColumn(key, definition, 1 / (columnKeys.length + (!!rowAction ? 1 : 0))));
-  const listColumns = listColumnKeys.map(key => formatListItem(key, definition));
-  const description = listDescriptionKey ? formatListItem(listDescriptionKey, definition) : undefined;
-
-  const listTitle = (row: R) => {
-    if (listOnClick) {
-      return row[titleColumnKey];
-    }
-    const item = formatListItem(titleColumnKey, definition);
-    return item.render(row);
-  }
 
   return (
     <>
@@ -111,26 +97,28 @@ export const DataDisplay = <R extends GridValidRowModel,F>(
       )}
       <Box width="100%">
         {(md && variant !== "list") || variant === "table" ? (
-          <DataTable
+          <SmartDataTable
             rows={rows}
-            columns={columns}
+            columnKeys={columnKeys}
             refresh={refresh}
             error={error}
             isLoading={isLoading}
-            rowAction={rowAction}
+            rowAction={rowAction as any}
+            definition={definition}
           />
         ) : (
-          <DataList
+          <SmartDataList
             rows={rows}
-            title={listTitle}
-            onClick={listOnClick}
-            description={description}
-            secondaryItems={listColumns}
-            avatarProps={listAvatarProps}
+            titleKey={listTitleKey}
+            descriptionKey={listDescriptionKey}
+            columnKeys={listColumnKeys}
+            onClick={listOnClick as any}
+            avatarProps={listAvatarProps as any}
             refresh={refresh}
             error={error}
             isLoading={isLoading}
-            rowAction={rowAction}
+            rowAction={rowAction as any}
+            definition={definition}
           />
         )}
       </Box>

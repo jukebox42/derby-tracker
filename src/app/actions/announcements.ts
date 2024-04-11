@@ -6,6 +6,12 @@ import { check as checkAccess, get as getAccess } from "./access";
 import { ActionResponseType, formatResponse, formatThrownErrorResponse, genericActionErrors, hasPermission, sanitizeHtml } from ".";
 import { validationSchema } from "#/lib/data/announcement";
 
+const announcementWithAuthor = Prisma.validator<Prisma.AnnouncementDefaultArgs>()({
+  include: { author: true },
+});
+
+export type AnnouncementWithAuthor = Prisma.AnnouncementGetPayload<typeof announcementWithAuthor>;
+
 /**
  * Protected Action
  * 
@@ -22,7 +28,7 @@ export const list = async (filters?: Prisma.AnnouncementWhereInput) => {
     include: { author: true }
   });
 
-  return formatResponse<Announcement[]>(announcements);
+  return formatResponse<AnnouncementWithAuthor[]>(announcements);
 }
 
 /**
@@ -46,7 +52,7 @@ export const get = async (id: string) => {
       return genericActionErrors.notFound();
     }
 
-    return formatResponse<Announcement>(announcement);
+    return formatResponse<AnnouncementWithAuthor>(announcement);
   } catch(e) {
     return formatThrownErrorResponse(e);
   }

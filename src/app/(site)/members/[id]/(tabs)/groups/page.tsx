@@ -1,30 +1,22 @@
 "use client"
-import { Permission } from "@prisma/client";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 
-import { ActionResponseType, groupActions, hasPermission, memberGroupActions } from "#/app/actions";
+import { Permission } from "@prisma/client";
+
+import { ActionResponseType, groupActions, memberGroupActions } from "#/app/actions";
 import { Card } from "#/ui/common";
 import { groupDefinition } from "#/lib/data/group";
 import { DataDisplay } from "#/ui/data";
 import { PromptButton } from "#/ui/smart";
-import { useSite } from "#/context";
 
 import { usePage } from "../../context";
 import { AddGroupModal } from "../../../_ui/AddGroupModal";
 
-
 export default function Page({ params: { id } }: { params: { id: string }}) {
   const { member } = usePage();
-  const { session } = useSite();
-  const canManage = hasPermission([Permission.GROUP_MANAGE], session);
 
-  const columns = ["name", "description"];
+  const columns = ["name", "description", "createdAt"];
   const listColumns: string[] = [];
-
-  // Add admin column and filter
-  if (canManage) {
-    columns.push("createdAt");
-  }
 
   return (
     <Card>
@@ -49,11 +41,12 @@ export default function Page({ params: { id } }: { params: { id: string }}) {
               startIcon={<GroupRemoveIcon />}
               isIconButton
               promptMessage={"You are about to remove this group from this member."}
+              permissions={[Permission.MEMBER_MANAGE]}
             />
           );
         }}
         columnKeys={columns}
-        titleColumnKey="name"
+        listTitleKey="name"
         listDescriptionKey="description"
         listColumnKeys={listColumns}
         definition={groupDefinition}

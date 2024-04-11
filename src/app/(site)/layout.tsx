@@ -5,8 +5,10 @@ import { Box, ThemeProvider, Toolbar } from "@mui/material";
 import { darkTheme } from "#/theme";
 import { routes } from "#/lib/routes";
 import { Shell } from "#/ui/shell";
-import { ActionResponseType, authActions } from "../actions";
+import { ActionResponseType, announcementActions, authActions } from "../actions";
 import { SiteProvider } from "#/context";
+import { Announcement } from "@prisma/client";
+import { AnnouncementBanners } from "#/ui/templates";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const data = await authActions.get();
@@ -18,6 +20,12 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
   const { member, session } = data.data;
 
+  const announcementResponse = await announcementActions.list();
+  let announcements: Announcement[] = [];
+  if (announcementResponse.type === ActionResponseType.OK) {
+    announcements = announcementResponse.data;
+  }
+
   return (
     <Box sx={{ display: "flex" }}>
       <SiteProvider data={{ activeMember: member, session }}>
@@ -28,6 +36,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
           <Box component="main" p={3}>
             <Toolbar sx={{ display: { xs: "block", md: "none" } }} />
             <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+              <AnnouncementBanners announcements={announcements} />
               {children}
             </Box>
           </Box>

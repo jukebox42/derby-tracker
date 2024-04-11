@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import { Definition } from "./types";
 import { renderValue } from "#/ui/data";
 import { routes } from "../routes";
+import { Permission } from "@prisma/client";
 
 export const permissions: {[key: string]: string} = {
   ANNOUNCEMENTS_READ: "Announcements read",
@@ -39,15 +40,15 @@ export const permissions: {[key: string]: string} = {
   GAME_ROSTER_MANAGE: "Game roster manage",
 }
 
-export const groupDetailPath = (id: string | number) => `${routes.GROUPS.path}/${id}`;
+export const groupDetailPath = (id: string) => `${routes.GROUPS.path}/${id}`;
 
 export const groupDefinition: Definition = {
   name: {
     key: "name",
     label: "Name",
     type: "string",
-    render: params => renderValue.link(params.name, groupDetailPath(params.id), false),
-    renderCell: params => renderValue.link(params.value, groupDetailPath(params.id), false),
+    render: params => params.name,
+    renderCell: params => renderValue.link(params.name, groupDetailPath(params.id), false),
     validation: () => Yup.string().required("Group name required."),
   },
   description: {
@@ -55,7 +56,6 @@ export const groupDefinition: Definition = {
     label: "Description",
     type: "string",
     render: params => renderValue.string(params.description),
-    renderCell: params => renderValue.string(params.value),
     validation: () => Yup.string().nullable(),
   },
   permissions: {
@@ -63,7 +63,6 @@ export const groupDefinition: Definition = {
     label: "Permissions",
     type: "array",
     render: params => renderValue.array(params.permissions, permissions),
-    renderCell: params => renderValue.array(params.value, permissions),
     validation: () => Yup.array().of(Yup.string().oneOf(Object.keys(permissions))).min(1, "Permissions are required."),
   },
   updatedAt: {
@@ -71,16 +70,16 @@ export const groupDefinition: Definition = {
     label: "Updated",
     type: "datetime",
     render: params => renderValue.datetime(params.updatedAt),
-    renderCell: params => renderValue.datetime(params.value),
     validation: () => Yup.date(),
+    permissions: [Permission.GROUP_MANAGE],
   },
   createdAt: {
     key: "createdAt",
     label: "Created",
     type: "datetime",
     render: params => renderValue.datetime(params.createdAt),
-    renderCell: params => renderValue.datetime(params.value),
     validation: () => Yup.date(),
+    permissions: [Permission.GROUP_MANAGE],
   },
 }
 

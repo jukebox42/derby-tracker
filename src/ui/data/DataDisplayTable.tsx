@@ -1,11 +1,11 @@
-import { GridValidRowModel } from "@mui/x-data-grid";
 import { DataDisplay, DataDisplayTableProps } from ".";
+import { DataDisplayRow } from "./types";
 
-export const DataDisplayTable = <R extends GridValidRowModel,F>(params: DataDisplayTableProps<R,F>) => (
+export const DataDisplayTable = <R extends DataDisplayRow,F>(params: DataDisplayTableProps<R,F>) => (
   <DataDisplay
     {...params}
     variant="table"
-    titleColumnKey=""
+    listTitleKey=""
     listColumnKeys={[]}
   />
 );

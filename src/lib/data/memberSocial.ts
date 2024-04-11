@@ -24,3 +24,8 @@ export const memberSocialDefinition: Definition = {
     validation: () => Yup.string().nullable(),
   },
 };
+
+export const validationSchema = Yup.object().shape({
+  slack: memberSocialDefinition["slack"].validation(),
+  facebook: memberSocialDefinition["facebook"].validation(),
+});

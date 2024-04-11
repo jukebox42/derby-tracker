@@ -1,5 +1,4 @@
 "use server"
-
 import { MemberContact, Permission, Prisma } from "@prisma/client";
 
 import prisma from "#/lib/prisma";

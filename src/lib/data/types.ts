@@ -1,4 +1,4 @@
-import { GridRenderCellParams, GridTreeNodeWithRender } from "@mui/x-data-grid";
+import { Permission } from "@prisma/client";
 import React from "react";
 
 export type DefinitionItem = {
@@ -7,8 +7,9 @@ export type DefinitionItem = {
   type: string,
   map?: {[key: string]: string},
   render: (params: any) => React.ReactNode,
-  renderCell?: (params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>) => React.ReactNode,
+  renderCell?: (params: any) => React.ReactNode,
   validation: () => any,
+  permissions?: Permission[],
 }
 
 export type Definition = Record<string, DefinitionItem>;

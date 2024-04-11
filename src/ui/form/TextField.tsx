@@ -1,16 +1,16 @@
 "use client"
-import { TextField as Wrapped, TextFieldProps, Skeleton, } from "@mui/material";
+import { TextField as Wrapped, TextFieldProps as MuiTextFieldProps, Skeleton, } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { useField } from ".";
 
-type Props = {
+export type TextFieldProps = {
   name: string,
   label: string,
   defaultValue?: string | null,
   isLoading?: boolean,
-} & Omit<TextFieldProps, "label" | "name" | "defaultValue" | "onChange" | "helperText" | "error">
+} & Omit<MuiTextFieldProps, "label" | "name" | "defaultValue" | "onChange" | "helperText" | "error">
 
-export const TextField = (props: Props) => {
+export const TextField = (props: TextFieldProps) => {
   const { name, label, defaultValue = "", children, disabled, isLoading, ...rest} = props;
   const { control, isSubmitting, isLoading: formIsLoading } = useField();
 
@@ -20,6 +20,7 @@ export const TextField = (props: Props) => {
 
   return (
     <Controller
+      key={`${name}-${defaultValue}`}
       name={name}
       control={control}
       defaultValue={defaultValue}

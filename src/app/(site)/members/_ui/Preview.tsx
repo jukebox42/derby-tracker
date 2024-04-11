@@ -9,6 +9,7 @@ import { useSite } from "#/context";
 
 import { usePage } from "../[id]/context";
 import { ChangePasswordModal } from "./ChangePasswordModal";
+import { EditModal } from "./EditModal";
 
 export const Preview = () => {
   const { hasAccess } = useSite([Permission.MEMBER_READ, Permission.MEMBER_MANAGE]);
@@ -47,7 +48,7 @@ return (
     ]}
     actions={
       <>
-        <Button variant="contained" color="secondary">Edit</Button>
+        <EditModal />
         <ChangePasswordModal />
       </>
     }

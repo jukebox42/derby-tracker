@@ -6,7 +6,6 @@ import { TitleCard } from "#/ui/common";
 import { memberContactDefinition as mcd } from "#/lib/data/memberContact";
 
 import { usePage } from "../../context";
-import { EditContactModal } from "../../../_ui/EditContactModal";
 
 
 export default function Page({ params: { id } }: { params: { id: string }}) {
@@ -30,7 +29,7 @@ export default function Page({ params: { id } }: { params: { id: string }}) {
 
   return (
     <>
-      <TitleCard title="Contact" action={<EditContactModal  />}>
+      <TitleCard title="Contact">
         <Grid container spacing={2}>
           {contactInfo.map(i => (
             <Grid sm={12} md={6} key={i.label}>

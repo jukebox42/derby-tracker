@@ -1,15 +1,15 @@
 "use client"
-import { Checkbox as Wrapped, FormControlLabel, CheckboxProps } from "@mui/material";
+import { Checkbox as Wrapped, FormControlLabel, CheckboxProps as MuiCheckboxProps } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { useField } from ".";
 
-type Props = {
+export type CheckboxProps = {
   name: string,
   label: string,
   defaultChecked?: boolean,
-} & Omit<CheckboxProps,  "label" | "name" | "defaultValue">
+} & Omit<MuiCheckboxProps,  "label" | "name" | "defaultValue">
 
-export const Checkbox = ({ label, name, defaultChecked = false, disabled, ...rest }: Props) => {
+export const Checkbox = ({ label, name, defaultChecked = false, disabled, ...rest }: CheckboxProps) => {
   const { control, isSubmitting } = useField();
   return(
     <Controller

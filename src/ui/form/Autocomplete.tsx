@@ -3,7 +3,7 @@ import { Autocomplete as Wrapped, TextField, Chip, Skeleton } from "@mui/materia
 import { Controller } from "react-hook-form";
 import { useField } from ".";
 
-type Props = {
+export type AutocompleteProps = {
   name: string,
   label: string,
   required?: boolean,
@@ -14,7 +14,7 @@ type Props = {
   isLoading?: boolean,
 };
 
-export const Autocomplete = (props: Props) => {
+export const Autocomplete = (props: AutocompleteProps) => {
   const { label, name, required, defaultValue = [], options, getOptionLabel, disabled, isLoading } = props;
   const { control, isSubmitting, isLoading: formIsLoading } = useField();
 
@@ -24,6 +24,7 @@ export const Autocomplete = (props: Props) => {
 
   return (
     <Controller
+      key={`${name}-${defaultValue?.toString()}`}
       name={name}
       control={control}
       defaultValue={defaultValue ?? []}

@@ -2,6 +2,7 @@ import * as Yup from "yup";
 
 import { renderValue } from "#/ui/data";
 import { Definition } from "./types";
+import { Permission } from "@prisma/client";
 
 export const announcementDefinition: Definition = {
   title: {
@@ -9,7 +10,6 @@ export const announcementDefinition: Definition = {
     label: "Title",
     type: "string",
     render: params => renderValue.string(params.title),
-    renderCell: params => renderValue.string(params.value),
     validation: () => Yup.string().required("Announcement title is required."),
   },
   description: {
@@ -17,7 +17,6 @@ export const announcementDefinition: Definition = {
     label: "Description",
     type: "string",
     render: params => renderValue.rte(params.description),
-    renderCell: params => renderValue.string(params.value),
     validation: () => Yup.string().required("Announcement description is required."),
   },
   author: {
@@ -25,7 +24,6 @@ export const announcementDefinition: Definition = {
     label: "Author",
     type: "string",
     render: params => renderValue.string(params.author.alias),
-    renderCell: params => renderValue.string(params.value.alias),
     validation: () => Yup.string().required("Author is required."),
   },
   updatedAt: {
@@ -33,15 +31,14 @@ export const announcementDefinition: Definition = {
     label: "Updated",
     type: "datetime",
     render: params => renderValue.datetime(params.updatedAt),
-    renderCell: params => renderValue.datetime(params.value),
     validation: () => Yup.date(),
+    permissions: [Permission.ANNOUNCEMENTS_MANAGE],
   },
   createdAt: {
     key: "createdAt",
     label: "Created",
     type: "datetime",
     render: params => renderValue.datetime(params.createdAt),
-    renderCell: params => renderValue.datetime(params.value),
     validation: () => Yup.date(),
   },
 }

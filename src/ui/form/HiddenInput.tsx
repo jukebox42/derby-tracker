@@ -2,17 +2,18 @@
 import { Controller } from "react-hook-form";
 import { useField } from ".";
 
-type Props = {
+export type HiddenInputProps = {
   name: string,
   defaultValue: string,
 }
 
-export const TextField = (props: Props) => {
+export const HiddenInput = (props: HiddenInputProps) => {
   const { name, defaultValue } = props;
   const { control } = useField();
 
   return (
     <Controller
+      key={`${name}-${defaultValue}`}
       name={name}
       control={control}
       defaultValue={defaultValue}

@@ -3,17 +3,18 @@ import { Rating as Wrapped, FormControlLabel, FormHelperText, FormControl } from
 import { Controller } from "react-hook-form";
 import { useField } from ".";
 
-type Props = {
+export type RatingProps = {
   name: string,
   label: string,
   defaultValue?: string,
   disabled?: boolean,
 };
 
-export const Rating = ({ label, name, defaultValue, disabled }: Props) => {
+export const Rating = ({ label, name, defaultValue, disabled }: RatingProps) => {
   const { control, isSubmitting } = useField();
   return (
     <Controller
+      key={`${name}-${defaultValue}`}
       name={name}
       control={control}
       defaultValue={defaultValue}

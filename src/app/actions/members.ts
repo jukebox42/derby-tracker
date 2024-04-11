@@ -1,10 +1,11 @@
 "use server"
-import { Member, Permission, Prisma } from "@prisma/client";
+import { Member, MemberContact, MemberSocial, Permission, Prisma } from "@prisma/client";
 
 import prisma from "#/lib/prisma";
 import { validationSchema } from "#/lib/data/members";
 import { check as checkAccess, get as getAccess } from "./access";
 import { ActionResponseType, formatThrownErrorResponse, formatResponse, genericActionErrors, hasPermission } from "./utils";
+import { memberContactActions, memberSocialActions } from ".";
 
 const memberWithInfo = Prisma.validator<Prisma.MemberDefaultArgs>()({
   include: { contact: true, social: true },
@@ -12,6 +13,10 @@ const memberWithInfo = Prisma.validator<Prisma.MemberDefaultArgs>()({
 
 export type MemberWithInfo = Prisma.MemberGetPayload<typeof memberWithInfo>;
 
+export type MemberEdit =
+  Omit<Member, "id" | "isOnLoa" | "active" | "createdAt" | "updatedAt"> &
+  { social: Omit<MemberSocial, "memberId"> } &
+  { contact: Omit<MemberContact, "memberId"> };
 
 /**
  * Protected Action
@@ -177,6 +182,7 @@ export const create = async (member: Omit<Member, "id" | "createdAt" | "updatedA
     name: member.name,
     email: member.email,
     alias: member.alias ?? member.name,
+    pronouns: member.pronouns ?? null,
     number: member.number ?? null,
     level: member.level,
     preferredPosition: member.preferredPosition ?? null,
@@ -190,6 +196,62 @@ export const create = async (member: Omit<Member, "id" | "createdAt" | "updatedA
     });
 
     return formatResponse<Member>(newMember);
+  } catch(e) {
+    return formatThrownErrorResponse(e);
+  }
+}
+
+/**
+ * Protected Action
+ * 
+ * Edit a member. It will create contact or social if they don't exist. Users can edit themselves but cannot change
+ * their email address. Only admins can do that.
+ */
+export const edit = async (
+  id: string,
+  member: Omit<Member, "id" | "isOnLoa" | "active" | "createdAt" | "updatedAt">,
+  social: Omit<MemberSocial, "memberId">,
+  contact: Omit<MemberContact, "memberId">
+) => {
+  const session = await getAccess();
+  if (session.type === ActionResponseType.ERROR) {
+    return genericActionErrors.permissionDenied();
+  }
+  const isAdmin = hasPermission([Permission.MEMBER_MANAGE], session.data);
+  if (!isAdmin && session.data.memberId !== id) {
+    return genericActionErrors.permissionDenied();
+  }
+
+  const socialResult = await memberSocialActions.edit(id, social);
+  if (socialResult.type === ActionResponseType.ERROR) {
+    return socialResult;
+  }
+  const contactResult = await memberContactActions.edit(id, contact);
+  if (contactResult.type === ActionResponseType.ERROR) {
+    return contactResult;
+  }
+
+  const cleanMember = {
+    name: member.name,
+    ...(!isAdmin ? {} :{ email: member.email }), // don't let self change email address
+    alias: member.alias ?? member.name,
+    pronouns: member.pronouns ?? null,
+    about: member.about ?? null,
+    number: member.number ?? null,
+    level: member.level,
+    preferredPosition: member.preferredPosition ?? null,
+  };
+
+  try {
+    await validationSchema.validate(cleanMember);
+
+    const newMember = await prisma.member.update({
+      data: { ...cleanMember },
+      where: { id, },
+      include: { contact: true, social: true }
+    });
+
+    return formatResponse<MemberWithInfo>(newMember);
   } catch(e) {
     return formatThrownErrorResponse(e);
   }

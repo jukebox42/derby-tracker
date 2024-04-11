@@ -1,23 +1,13 @@
 "use client"
 import React from "react";
-import { Avatar, AvatarProps, Button, Divider, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Button, Divider, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Stack, Typography } from "@mui/material";
 
 import { ErrorText } from "#/ui/form";
 
-import { GenericDataDisplay } from "../types";
-import { ListItemDef } from "#/lib/data/utils";
+import { DataDisplayRow, ListDataDisplay } from "../types";
 import { Loading } from "#/ui/common";
-import { GridValidRowModel } from "@mui/x-data-grid";
 
-type Props<R extends GridValidRowModel> = {
-  avatarProps?: (row: R) => AvatarProps,
-  title: (row: R) => React.ReactNode,
-  secondaryItems: ListItemDef<R>[],
-  description?: ListItemDef<R>,
-  onClick?: (row: R) => void,
-} & GenericDataDisplay<R>;
-
-export const DataList = <R extends GridValidRowModel,>({ rows, isLoading, error, refresh, title, description, secondaryItems, rowAction, avatarProps, onClick }: Props<R>) => {
+export const DataList = <R extends DataDisplayRow,>({ rows, isLoading, error, refresh, title, description, secondaryItems, rowAction, avatarProps, onClick }: ListDataDisplay<R>) => {
   if (isLoading) {
     return <Loading simple />
   }
@@ -29,6 +19,14 @@ export const DataList = <R extends GridValidRowModel,>({ rows, isLoading, error,
         action={<Button onClick={refresh}>Retry</Button>}
       />
     )
+  }
+
+  if (!rows.length) {
+    return (
+      <Box component="main" sx={{ width: 200, mt: 10, mb: 10, mr: "auto", ml: "auto" }}>
+        No results.
+      </Box>
+    );
   }
 
   const listItem = (row: R) => (
@@ -45,7 +43,7 @@ export const DataList = <R extends GridValidRowModel,>({ rows, isLoading, error,
             )}
             <Stack spacing={2} component="span" direction="row" divider={<Divider orientation="vertical" flexItem />}>
               {secondaryItems.map(item => {
-                return <Typography key={item.field} variant="body2">{item.render(row)}</Typography>
+                return <Typography key={item.key} variant="body2">{item.render(row)}</Typography>
               })}
             </Stack>
           </>

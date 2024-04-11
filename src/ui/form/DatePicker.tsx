@@ -2,21 +2,22 @@
 import { FormControl, FormHelperText } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { DatePickerProps, DatePicker as Wrapped } from "@mui/x-date-pickers/DatePicker";
+import { DatePickerProps as MuiDatepickerProps, DatePicker as Wrapped } from "@mui/x-date-pickers/DatePicker";
 import { Controller } from "react-hook-form";
 import { useField } from '.';
 
-type Props = {
+export type DatePickerProps = {
   name: string,
   label: string,
   defaultValue?: Date,
-} & Omit<DatePickerProps<Date>,  "label" | "name" | "defaultValue" | "onChange">
+} & Omit<MuiDatepickerProps<Date>,  "label" | "name" | "defaultValue" | "onChange">
 
-export const DatePicker = ({ name, label, defaultValue, disabled, ...rest }: Props) => {
+export const DatePicker = ({ name, label, defaultValue, disabled, ...rest }: DatePickerProps) => {
   const { control, isSubmitting } = useField();
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Controller
+        key={`${name}-${defaultValue?.toString()}`}
         name={name}
         control={control}
         defaultValue={defaultValue}

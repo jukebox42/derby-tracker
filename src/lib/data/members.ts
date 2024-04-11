@@ -4,6 +4,9 @@ import { Definition } from "./types";
 
 import { renderValue } from "#/ui/data";
 import { routes } from "../routes";
+import { Permission } from "@prisma/client";
+import { memberSocialDefinition } from "./memberSocial";
+import { memberContactDefinition } from "./memberContact";
 
 export const positions: {[key: string]: string} = {
   BLOCKER: "Blocker",
@@ -21,13 +24,15 @@ export const levels: {[key: string]: string} = {
   GAME: "Game (Level 3)",
 }
 
+export const memberDetailPath = (id: string) => `${routes.MEMBERS.path}/${id}`;
+
 export const memberDefinition: Definition = {
   alias: {
     key: "alias",
     label: "Derby Name",
     type: "link",
-    render: params => renderValue.link(params.alias, `${routes.MEMBERS.path}/${params.id}`),
-    renderCell: params => renderValue.link(params.value, `${routes.MEMBERS.path}/${params.id}`),
+    render: params => renderValue.string(params.name),
+    renderCell: params => renderValue.link(params.alias, memberDetailPath(params.id)),
     validation: () => Yup.string().nullable(),
   },
   name: {
@@ -49,7 +54,6 @@ export const memberDefinition: Definition = {
     label: "Number",
     type: "string",
     render: params => renderValue.string(params.number, "#"),
-    renderCell: params => renderValue.string(params.value, "#"),
     validation: () => Yup.string().matches(/\d{1,4}|^$/, "Number is invalid").nullable(),
   },
   level: {
@@ -58,7 +62,6 @@ export const memberDefinition: Definition = {
     type: "string",
     map: levels,
     render: params => renderValue.enum(params.level, levels),
-    renderCell: params => renderValue.enum(params.value, levels),
     validation: () => Yup.string().oneOf(Object.keys(levels)).required("Level is required")
   },
   pronouns: {
@@ -80,7 +83,6 @@ export const memberDefinition: Definition = {
     label: "Is On Loa",
     type: "boolean",
     render: params => renderValue.boolean(params.isOnLoa, true),
-    renderCell: params => renderValue.boolean(params.value, true),
     validation: () => Yup.boolean(),
   },
   preferredPosition: {
@@ -89,7 +91,6 @@ export const memberDefinition: Definition = {
     type: "string",
     map: positions,
     render: params => renderValue.enum(params.preferredPosition, positions),
-    renderCell: params => renderValue.enum(params.value, positions),
     validation: () => Yup.string().oneOf(Object.keys(positions)).nullable(),
   },
   active: {
@@ -97,24 +98,24 @@ export const memberDefinition: Definition = {
     label: "Is Active",
     type: "boolean",
     render: params => renderValue.boolean(params.active, true),
-    renderCell: params => renderValue.boolean(params.value, true),
     validation: () => Yup.boolean(),
+    permissions: [Permission.MEMBER_MANAGE],
   },
   updatedAt: {
     key: "updatedAt",
     label: "Updated",
     type: "datetime",
     render: params => renderValue.datetime(params.updatedAt),
-    renderCell: params => renderValue.datetime(params.value),
     validation: () => Yup.date(),
+    permissions: [Permission.MEMBER_MANAGE],
   },
   createdAt: {
     key: "createdAt",
     label: "Created",
     type: "datetime",
     render: params => renderValue.datetime(params.createdAt),
-    renderCell: params => renderValue.datetime(params.value),
     validation: () => Yup.date(),
+    permissions: [Permission.MEMBER_MANAGE],
   },
 };
 
@@ -122,7 +123,30 @@ export const validationSchema = Yup.object().shape({
   name: memberDefinition["name"].validation(),
   email: memberDefinition["email"].validation(),
   alias: memberDefinition["alias"].validation(),
+  pronouns: memberDefinition["pronouns"].validation(),
   number: memberDefinition["number"].validation(),
   level: memberDefinition["level"].validation(),
   preferredPosition: memberDefinition["preferredPosition"].validation(),
+  about: memberDefinition["about"].validation(),
 });
+
+export const editValidationSchema = Yup.object().shape({
+  name: memberDefinition["name"].validation(),
+  email: memberDefinition["email"].validation(),
+  alias: memberDefinition["alias"].validation(),
+  pronouns: memberDefinition["pronouns"].validation(),
+  number: memberDefinition["number"].validation(),
+  level: memberDefinition["level"].validation(),
+  preferredPosition: memberDefinition["preferredPosition"].validation(),
+  about: memberDefinition["about"].validation(),
+
+  personalEmail: memberContactDefinition["personalEmail"].validation(),
+  phone: memberContactDefinition["phone"].validation(),
+  address: memberContactDefinition["address"].validation(),
+  city: memberContactDefinition["city"].validation(),
+  state: memberContactDefinition["state"].validation(),
+  zip: memberContactDefinition["zip"].validation(),
+
+  slack: memberSocialDefinition["slack"].validation(),
+  facebook: memberSocialDefinition["facebook"].validation(),
+})

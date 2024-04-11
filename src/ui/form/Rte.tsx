@@ -63,6 +63,7 @@ export const Rte = ({ label, name, defaultValue, required, disabled, isLoading, 
         {label} {" "} {required && "*"}
       </Typography>
       <Controller
+        key={`${name}-${defaultValue?.toString()}`}
         name={name}
         control={control}
         defaultValue={defaultValue}

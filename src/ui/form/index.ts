@@ -7,3 +7,5 @@ export * from "./Checkbox";
 export * from "./ErrorText";
 export * from "./FormProvider";
 export * from "./Rte";
+export * from "./HiddenInput";
+export * from "./FieldGrid";

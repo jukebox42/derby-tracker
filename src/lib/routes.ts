@@ -31,16 +31,6 @@ export const routes: Routes = {
     permissions: [],
   },
   // User Routes
-  ANNOUNCEMENTS: {
-    label: "Announcements",
-    path: "/announcements",
-    permissions: [Permission.ANNOUNCEMENTS_READ, Permission.ANNOUNCEMENTS_MANAGE],
-  },
-  ANNOUNCEMENTS_CREATE: {
-    label: "Create Announcement",
-    path: "/announcements/create",
-    permissions: [Permission.ANNOUNCEMENTS_MANAGE],
-  },
   ATTENDANCE: {
     label: "Attendance",
     path: "/attendance",
@@ -82,6 +72,16 @@ export const routes: Routes = {
     permissions: [Permission.STATS_READ, Permission.STATS_MANAGE],
   },
   // Admin routes
+  ANNOUNCEMENTS: {
+    label: "Announcements",
+    path: "/announcements",
+    permissions: [Permission.ANNOUNCEMENTS_MANAGE],
+  },
+  ANNOUNCEMENTS_CREATE: {
+    label: "Create Announcement",
+    path: "/announcements/create",
+    permissions: [Permission.ANNOUNCEMENTS_MANAGE],
+  },
   ASSESSMENTS: {
     label: "Assessments",
     path: "/assessments",
@@ -110,7 +110,6 @@ export const routes: Routes = {
 };
 
 export const navigationRoutes: Route[] = [
-  routes.ANNOUNCEMENTS,
   routes.ATTENDANCE,
   routes.EVENTS,
   routes.MEMBERS,
@@ -119,6 +118,7 @@ export const navigationRoutes: Route[] = [
 ];
 
 export const adminRoutes: Route[] = [
+  routes.ANNOUNCEMENTS,
   routes.ASSESSMENTS,
   routes.GROUPS,
   routes.SETTINGS,

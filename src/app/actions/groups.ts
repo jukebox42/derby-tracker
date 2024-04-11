@@ -73,11 +73,10 @@ export const listByMember = async (filters?: ({ memberId: string } & Omit<Prisma
 /**
  * Protected Action
  * 
- * Returns a specific member.
+ * Returns a specific group.
  */
 export const get = async (filters: Prisma.GroupWhereInput) => {
-  const id = typeof filters.id === "string" ? filters.id : undefined;
-  const isOk = await checkAccess([Permission.GROUP_READ, Permission.GROUP_MANAGE], id);
+  const isOk = await checkAccess([Permission.GROUP_READ, Permission.GROUP_MANAGE]);
   if (isOk.type === ActionResponseType.ERROR) {
     return isOk;
   }
@@ -154,6 +153,27 @@ export const edit = async (id: string, group: Omit<Group, "id" | "createdAt" | "
 
     return formatResponse<Group>(editGroup);
   } catch(e) {
+    return formatThrownErrorResponse(e);
+  }
+}
+
+/**
+ * Protected Action
+ * 
+ * delete an existing group.
+ */
+export const remove = async (id: string) => {
+  const isOk = await checkAccess([Permission.GROUP_MANAGE]);
+  if (isOk.type === ActionResponseType.ERROR) {
+    return isOk;
+  }
+
+  try {
+    await prisma.group.delete({
+      where: { id }
+    });
+    return formatResponse(true);
+  } catch (e) {
     return formatThrownErrorResponse(e);
   }
 }

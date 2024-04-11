@@ -72,6 +72,13 @@ enum EventType {
   ACTIVITY
 }
 
+enum TeamLevel {
+  A
+  B
+  C
+  HOME
+}
+
 // Tables
 
 model Member {
@@ -180,24 +187,15 @@ model Event {
   roster    Roster?
 }
 
-model TeamLevel {
-  @@map(name: "team_levels")
-  id     String     @default(cuid()) @id @db.VarChar(30)
-  name   String     @db.VarChar(200)
-
-  teams  Team[]
-}
-
 model Team {
   @@map(name: "teams")
   id           String     @default(cuid()) @id @db.VarChar(30)
   name         String     @db.VarChar(200)
-  description  String?  @db.VarChar(250)
+  description  String?    @db.VarChar(250)
+  level        TeamLevel
   createdAt    DateTime   @default(now()) @map(name: "created_at")
   updatedAt    DateTime   @updatedAt @map(name: "updated_at")
 
-  level        TeamLevel  @relation(fields: [levelId], references: [id])
-  levelId      String     @db.VarChar(30) @map(name: "level_id")
   charters     Charter[]
 }
 
